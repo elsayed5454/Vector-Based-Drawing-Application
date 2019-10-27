@@ -12,7 +12,6 @@ public class GeometricShapes implements Shape {
 	private Map<String, Double> prop = new HashMap<String, Double>() ;
 	private Color clr ;
 	private Color fillClr ;
-	private Graphics draw ;
 	
 	@Override
 	public void setPosition(Point position) {
@@ -56,11 +55,12 @@ public class GeometricShapes implements Shape {
 
 	@Override
 	public void draw(Graphics canvas) {
+		
 	}
 
 	@Override
 	public Object clone() throws CloneNotSupportedException{
-		return draw.create();
+		return null;
 	}
 
 }
