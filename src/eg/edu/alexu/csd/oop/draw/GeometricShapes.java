@@ -9,13 +9,13 @@ import java.util.Map;
 public class GeometricShapes implements Shape {
 
 	private Point point = new Point();
-	private Map<String, Double> prop = new HashMap<String, Double>() ;
-	private Color clr ;
-	private Color fillClr ;
+	private Map<String, Double> prop = new HashMap<String, Double>();
+	private Color clr;
+	private Color fillClr;
 	
 	@Override
 	public void setPosition(Point position) {
-		this.point = position ;
+		this.point = position;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class GeometricShapes implements Shape {
 
 	@Override
 	public void setColor(Color color) {
-		this.clr = color ;
+		this.clr = color;
 	}
 
 	@Override
