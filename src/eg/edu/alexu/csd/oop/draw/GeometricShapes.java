@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class GeometricShapes implements Shape {
 
-	private Point point = new Point();
-	private Map<String, Double> prop = new HashMap<String, Double>();
-	private Color clr;
-	private Color fillClr;
+	protected Point point = new Point();
+	protected Map<String, Double> prop = new HashMap<String, Double>();
+	protected Color clr;
+	protected Color fillClr;
 	
 	@Override
 	public void setPosition(Point position) {

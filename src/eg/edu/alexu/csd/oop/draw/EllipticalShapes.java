@@ -3,31 +3,15 @@ package eg.edu.alexu.csd.oop.draw;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class EllipticalShapes extends GeometricShapes {
-	private Map<String, Double> prop = new HashMap<String, Double>();
 	
 	public EllipticalShapes () {
 		this.prop.put("width", 0.0);
 		this.prop.put("height", 0.0);
 		setProperties(prop);
-	}
-	
-	// Ellipse declaration
-	public EllipticalShapes (double width, double height) {
-		this.prop.put("width", width);
-		this.prop.put("height", height);
-		setProperties(prop);
-	}
-	
-	// Circle declaration
-	public EllipticalShapes (double radius) {
-		this.prop.put("width", radius);
-		this.prop.put("height", radius);
-		setProperties(prop);
-	}
+	}	
 	
 	@Override
 	public void draw(Graphics canvas) {
