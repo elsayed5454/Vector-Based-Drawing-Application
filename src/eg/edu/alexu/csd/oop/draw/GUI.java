@@ -1,18 +1,13 @@
 package eg.edu.alexu.csd.oop.draw;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.awt.EventQueue;
 
-import javax.swing.*;
-import java.util.Iterator;
+import javax.swing.JFrame;
+import javax.swing.JButton;
 
-public class GUI extends JFrame{
-	
-	JButton brushButton, lineButton, circleButton, ellipseButton, rectButton, squareButton, triangleButton, strokeButton, fillButton;
-	int action = 1;
-	Color stroke = Color.BLACK, fillClr;
+public class GUI {
+
+	private JFrame frame;
 
 	/**
 	 * Launch the application.
@@ -21,7 +16,8 @@ public class GUI extends JFrame{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					new GUI();
+					GUI window = new GUI();
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -33,111 +29,61 @@ public class GUI extends JFrame{
 	 * Create the application.
 	 */
 	public GUI() {
-		
-		this.setSize(500, 500);
-		this.setTitle("Vector Based Paint");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JPanel panel = new JPanel();
-		Box box = Box.createHorizontalBox();
-		
-		brushButton = makeButton("./src/brush.png", 1);
-		lineButton = makeButton("./src/line.png", 2);
-		circleButton = makeButton("./src/circle.png", 3);
-		ellipseButton = makeButton("./src/ellipse.png", 4);
-		rectButton = makeButton("./src/rectangle.png", 5);
-		squareButton = makeButton("./src/square.png", 6);
-		triangleButton = makeButton("./src/triangle.png", 7);
-		strokeButton = makeButton("./src/stroke.png", 8);
-		fillButton = makeButton("./src/fill.png", 9);
-		
-		box.add(brushButton);
-		box.add(lineButton);
-		box.add(circleButton);
-		box.add(ellipseButton);
-		box.add(rectButton);
-		box.add(squareButton);
-		box.add(triangleButton);
-		box.add(strokeButton);
-		box.add(fillButton);
-		
-		panel.add(box);
-		this.add(panel, BorderLayout.SOUTH);
-		this.add(new DrawCanvas(), BorderLayout.CENTER);
-		this.setVisible(true);
-	}
-	
-	public JButton makeButton(String iconFile, final int actionNum) {
-		
-		JButton button = new JButton();
-		Icon buttonIcon = new ImageIcon(iconFile);
-		button.setIcon(buttonIcon);
-		
-		button.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				action = actionNum;
-			}
-		});
-		return button;
+		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private class DrawCanvas extends JComponent {
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(0, 0,frame.getToolkit().getScreenSize().width + 30 ,frame.getToolkit().getScreenSize().height - 30);
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
 		
-		ArrayList<Shape> shapes = new ArrayList<Shape>();
-		ArrayList<Color> shapesFill = new ArrayList<Color>();
-		ArrayList<Color> shapesStroke = new ArrayList<Color>();
+		JButton btnLine = new JButton("Line Segment");
+		btnLine.setBounds(304, 650, 112, 23);
+		frame.getContentPane().add(btnLine);
 		
-		public DrawCanvas() {
-			
-			this.addMouseListener(new MouseAdapter() {
-				
-				public void mousePressed(MouseEvent e) {
-					
-					Point start = new Point(e.getX(), e.getY());
-					Point end = new Point(e.getX(), e.getY());
-					repaint();
-				}
-				
-				public void mouseReleased(MouseEvent e) {
-					
-					Rectangle shape_1 = new Rectangle(10.0,10.0);
-					shapes.add(shape_1);
-					shapesFill.add(fillClr);
-					shapesStroke.add(stroke);
-					
-					repaint();
-					
-				}
-			});
-			this.addMouseMotionListener(new MouseMotionAdapter() {
-				
-				public void mouseDragged(MouseEvent e) {
-					
-					Point end = new Point(e.getX(), e.getY());
-					repaint();
-				}
-			});
-		}
+		JButton btnCircle = new JButton("Circle");
+		btnCircle.setBounds(416, 650, 112, 23);
+		frame.getContentPane().add(btnCircle);
 		
-		public void paint(Graphics g) {
-			
-			Graphics2D settings = (Graphics2D)g;
-			settings.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			settings.setStroke(new BasicStroke(2));
-			
-			Iterator<Color> strokeCnt = shapesStroke.iterator();
-			Iterator<Color> fillCnt = shapesFill.iterator();
-			
-			for (Shape s : shapes) {
-				
-			}
-		}
+		JButton btnEllipse = new JButton("Ellipse");
+		btnEllipse.setBounds(528, 650, 112, 23);
+		frame.getContentPane().add(btnEllipse);
 		
+		JButton btnTriangle = new JButton("Triangle");
+		btnTriangle.setBounds(640, 650, 112, 23);
+		frame.getContentPane().add(btnTriangle);
 		
+		JButton btnRect = new JButton("Rectangle");
+		btnRect.setBounds(752, 650, 112, 23);
+		frame.getContentPane().add(btnRect);
+		
+		JButton btnSqre = new JButton("Square");
+		btnSqre.setBounds(864, 650, 112, 23);
+		frame.getContentPane().add(btnSqre);
+		
+		JButton btnRmv = new JButton("Remove");
+		btnRmv.setBounds(976, 650, 112, 23);
+		frame.getContentPane().add(btnRmv);
+		
+		JButton btnUndo = new JButton("Undo");
+		btnUndo.setBounds(1260, 282, 89, 23);
+		frame.getContentPane().add(btnUndo);
+		
+		JButton btnRedo = new JButton("Redo");
+		btnRedo.setBounds(1260, 319, 89, 23);
+		frame.getContentPane().add(btnRedo);
+		
+		JButton btnSave = new JButton("Save");
+		btnSave.setBounds(1260, 356, 89, 23);
+		frame.getContentPane().add(btnSave);
+		
+		JButton btnLoad = new JButton("Load");
+		btnLoad.setBounds(1260, 393, 89, 23);
+		frame.getContentPane().add(btnLoad);
 	}
-
 }
