@@ -246,10 +246,22 @@ public class GUI {
 		frame.getContentPane().add(btnRmv);
 		
 		JButton btnUndo = new JButton("Undo");
+		btnUndo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				engine.undo();
+				engine.refresh(canvas.getGraphics());
+			}
+		});
 		btnUndo.setBounds(1260, 282, 89, 23);
 		frame.getContentPane().add(btnUndo);
 		
 		JButton btnRedo = new JButton("Redo");
+		btnRedo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				engine.redo();
+				engine.refresh(canvas.getGraphics());
+			}
+		});
 		btnRedo.setBounds(1260, 319, 89, 23);
 		frame.getContentPane().add(btnRedo);
 		
