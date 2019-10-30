@@ -1,12 +1,20 @@
 package eg.edu.alexu.csd.oop.draw;
 
+import java.awt.Canvas;
 import java.awt.EventQueue;
+import java.awt.Point;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class GUI {
-
+	
+	DrawingEngine engine = new Logic();
+	
 	private JFrame frame;
 
 	/**
@@ -25,6 +33,10 @@ public class GUI {
 		});
 	}
 
+	boolean isCircle = false;
+	boolean expand = false;
+	Point center = new Point();
+
 	/**
 	 * Create the application.
 	 */
@@ -41,12 +53,38 @@ public class GUI {
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		Canvas canvas = new Canvas();
+		canvas.setLocation(0, 0);
+		canvas.setSize(1256, 650);
+		frame.getContentPane().add(canvas);
+		canvas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (isCircle && !expand) {
+					center = e.getPoint();
+					expand = true;
+				}
+				else if (isCircle && expand) {
+					Point boundary = e.getPoint();
+					double radius = Point.distance(center.getX(), center.getY(), boundary.getX(), boundary.getY());
+					Shape circle = new Circle(radius);
+					circle.setPosition(center);
+					engine.addShape(circle);
+					engine.refresh(canvas.getGraphics());
+				}
+			}
+		});
 		
 		JButton btnLine = new JButton("Line Segment");
 		btnLine.setBounds(304, 650, 112, 23);
 		frame.getContentPane().add(btnLine);
 		
 		JButton btnCircle = new JButton("Circle");
+		btnCircle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isCircle = true;
+			}
+		});
 		btnCircle.setBounds(416, 650, 112, 23);
 		frame.getContentPane().add(btnCircle);
 		
