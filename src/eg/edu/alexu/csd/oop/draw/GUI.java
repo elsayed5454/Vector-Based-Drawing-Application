@@ -67,8 +67,10 @@ public class GUI {
 				else if (isCircle && expand) {
 					Point boundary = e.getPoint();
 					double radius = Point.distance(center.getX(), center.getY(), boundary.getX(), boundary.getY());
-					Shape circle = new Circle(radius);
-					circle.setPosition(center);
+					Shape circle = new Circle(radius*2);
+					Point upperLeft = new Point();
+					upperLeft.setLocation(center.getX() - radius, center.getY() - radius);
+					circle.setPosition(upperLeft);
 					engine.addShape(circle);
 					engine.refresh(canvas.getGraphics());
 				}
