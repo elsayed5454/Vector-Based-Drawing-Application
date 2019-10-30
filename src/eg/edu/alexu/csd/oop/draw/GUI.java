@@ -6,10 +6,7 @@ import java.awt.event.*;
 
 public class GUI {
 	
-	DrawingEngine engine = new Logic();
-	
 	private JFrame frame;
-
 	/**
 	 * Launch the application.
 	 */
@@ -25,11 +22,6 @@ public class GUI {
 			}
 		});
 	}
-
-	private int action = -1;
-	boolean secondClick = false, thirdClick = false;
-	Point firstPoint, secondPoint;
-	
 	/**
 	 * Create the application.
 	 */
@@ -37,6 +29,11 @@ public class GUI {
 		initialize();
 	}
 
+	DrawingEngine engine = new Logic();
+	private int action = -1;
+	boolean secondClick = false, thirdClick = false;
+	Point firstPoint, secondPoint;
+	Color clr = Color.BLACK, fillClr = Color.WHITE;
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -61,6 +58,7 @@ public class GUI {
 					}
 					else {
 						Shape line = new LineSegment(firstPoint, e.getPoint());
+						line.setColor(clr);
 						engine.addShape(line);
 						secondClick = false;
 					}
@@ -78,6 +76,8 @@ public class GUI {
 						Point topLeft = new Point();
 						topLeft.setLocation(firstPoint.getX() - radius, firstPoint.getY() - radius);
 						circle.setPosition(topLeft);
+						circle.setColor(clr);
+						circle.setFillColor(fillClr);
 						engine.addShape(circle);
 						secondClick = false;
 					}
@@ -99,6 +99,8 @@ public class GUI {
 						Point topLeft = new Point();
 						topLeft.setLocation(firstPoint.getX() - halfWidth, firstPoint.getY() - halfHeight);
 						ellipse.setPosition(topLeft);
+						ellipse.setColor(clr);
+						ellipse.setFillColor(fillClr);
 						engine.addShape(ellipse);
 						secondClick = false;
 						thirdClick = false;
@@ -116,6 +118,8 @@ public class GUI {
 					}
 					else {
 						Shape triangle = new Triangle(firstPoint, secondPoint, e.getPoint());
+						triangle.setColor(clr);
+						triangle.setFillColor(fillClr);
 						engine.addShape(triangle);
 						secondClick = false;
 						thirdClick = false;
@@ -136,6 +140,8 @@ public class GUI {
 						double height = Math.abs(firstPoint.getY() - e.getY());
 						Shape rectangle = new Rectangle(width, height);
 						rectangle.setPosition(topLeft);
+						rectangle.setColor(clr);
+						rectangle.setFillColor(fillClr);
 						engine.addShape(rectangle);
 						secondClick = false;
 					}
@@ -154,6 +160,8 @@ public class GUI {
 						// Diagonal * cos(45 degrees) = side of square
 						double side = Point.distance(firstPoint.getX(), firstPoint.getY(), e.getX(), e.getY()) * Math.cos(Math.toRadians(45));
 						Shape square = new Square(side);
+						square.setColor(clr);
+						square.setFillColor(fillClr);
 						square.setPosition(topLeft);
 						engine.addShape(square);
 						secondClick = false;
@@ -173,7 +181,7 @@ public class GUI {
 								
 						if (selected.getX() >= minX && selected.getX() <= maxX && selected.getY() >= minY && selected.getY() <= maxY) {
 							engine.removeShape(shapes[i]);
-							canvas.getGraphics().clearRect((int)minX - 1, (int)minY - 1, (int)maxX, (int)maxY);
+							canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 							break;
 						}
 					}
@@ -182,9 +190,12 @@ public class GUI {
 			}
 		});
 		
+		
+		///// Start Buttons
 		JButton btnLine = new JButton("Line Segment");
 		btnLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				secondClick = false;
 				action = 1;
 			}
 		});
@@ -194,6 +205,7 @@ public class GUI {
 		JButton btnCircle = new JButton("Circle");
 		btnCircle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				secondClick = false;
 				action = 2;
 			}
 		});
@@ -203,6 +215,8 @@ public class GUI {
 		JButton btnEllipse = new JButton("Ellipse");
 		btnEllipse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				secondClick = false;
+				thirdClick = false;
 				action = 3;
 			}
 		});
@@ -212,6 +226,8 @@ public class GUI {
 		JButton btnTriangle = new JButton("Triangle");
 		btnTriangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				secondClick = false;
+				thirdClick = false;
 				action = 4;
 			}
 		});
@@ -221,6 +237,7 @@ public class GUI {
 		JButton btnRect = new JButton("Rectangle");
 		btnRect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				secondClick = false;
 				action = 5;
 			}
 		});
@@ -230,6 +247,7 @@ public class GUI {
 		JButton btnSqre = new JButton("Square");
 		btnSqre.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				secondClick = false;
 				action = 6;
 			}
 		});
@@ -244,6 +262,28 @@ public class GUI {
 		});
 		btnRmv.setBounds(976, 650, 112, 23);
 		frame.getContentPane().add(btnRmv);
+		
+		JButton btnColor = new JButton("");
+		btnColor.setBackground(Color.BLACK);
+		btnColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clr = JColorChooser.showDialog(null, "Choose the stroke color", Color.BLACK);
+				btnColor.setBackground(clr);
+			}
+		});
+		btnColor.setBounds(1262, 623, 50, 50);
+		frame.getContentPane().add(btnColor);
+		
+		JButton btnFillColor = new JButton("");
+		btnFillColor.setBackground(Color.WHITE);
+		btnFillColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fillClr = JColorChooser.showDialog(null, "Choose the fill color", Color.WHITE);
+				btnFillColor.setBackground(fillClr);
+			}
+		});
+		btnFillColor.setBounds(1334, 623, 50, 50);
+		frame.getContentPane().add(btnFillColor);
 		
 		JButton btnUndo = new JButton("Undo");
 		btnUndo.setBounds(1260, 282, 89, 23);
