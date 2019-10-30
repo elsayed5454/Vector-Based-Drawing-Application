@@ -11,9 +11,8 @@ public class Logic implements DrawingEngine {
 	
 	@Override
 	public void refresh(Graphics canvas) {
-		Shape[] drawnShapes = getShapes() ;
-		for (int i = 0 ; i < drawnShapes.length ; i++) {
-			drawnShapes[i].draw(canvas);
+		for (Shape shape : shapes) {
+			shape.draw(canvas);
 		}
 	}
 
