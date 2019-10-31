@@ -34,6 +34,7 @@ public class GUI {
 	boolean secondClick = false, thirdClick = false;
 	Point firstPoint, secondPoint;
 	Color clr = Color.BLACK, fillClr = Color.WHITE;
+	Shape toMove = null;
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -44,8 +45,8 @@ public class GUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		Canvas canvas = new Canvas();
-		canvas.setLocation(0, 0);
-		canvas.setSize(1256, 650);
+		canvas.setLocation(0, 101);
+		canvas.setSize(1284, 543);
 		frame.getContentPane().add(canvas);
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
@@ -172,7 +173,7 @@ public class GUI {
 					Point selected = e.getPoint();
 					Shape[] shapes = engine.getShapes();
 					double minX, minY, maxX, maxY;
-					for (int i = shapes.length - 1; i >= 0; i--) {
+					for (int i = shapes.length -1 ; i>= 0 ; i--) {
 						
 						minX = shapes[i].getPosition().getX();
 						minY = shapes[i].getPosition().getY();
@@ -186,12 +187,94 @@ public class GUI {
 						}
 					}
 				}
+				else if (action == 8) {
+					Point selected = e.getPoint();
+					Shape[] shapes = engine.getShapes();
+					double minX, minY, maxX, maxY;
+					for (int i = shapes.length - 1; i >= 0; i--) {
+						
+						minX = shapes[i].getPosition().getX();
+						minY = shapes[i].getPosition().getY();
+						maxX = minX + shapes[i].getProperties().get("width");
+						maxY = minY + shapes[i].getProperties().get("height");
+								
+						if (selected.getX() >= minX && selected.getX() <= maxX && selected.getY() >= minY && selected.getY() <= maxY && (shapes[i].getColor() != clr || shapes[i].getFillColor() != fillClr)) {
+							try {
+								Shape colored = (Shape) shapes[i].clone();
+								colored.setColor(clr);
+								colored.setFillColor(fillClr);
+								engine.updateShape(shapes[i], colored);
+								canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+							} catch (CloneNotSupportedException e1) {
+								e1.printStackTrace();
+							}
+							break;
+						}
+					}
+				}
+				engine.refresh(canvas.getGraphics());
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (action == 9) {
+					firstPoint = e.getPoint();
+					Shape[] shapes = engine.getShapes();
+					double minX, minY, maxX, maxY;
+					for (int i = shapes.length -1 ; i>= 0 ; i--) {
+						
+						minX = shapes[i].getPosition().getX();
+						minY = shapes[i].getPosition().getY();
+						maxX = minX + shapes[i].getProperties().get("width");
+						maxY = minY + shapes[i].getProperties().get("height");
+								
+						if (firstPoint.getX() >= minX && firstPoint.getX() <= maxX && firstPoint.getY() >= minY && firstPoint.getY() <= maxY) {
+							toMove = shapes[i];
+							break;
+						}
+					}
+				}
+				engine.refresh(canvas.getGraphics());
+			}
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (action == 9) {
+					double x , y ;
+					if (toMove != null) {
+						Point newPosition = new Point();
+						if ( firstPoint.getX() <= e.getX()) {
+							x = (toMove.getPosition().getX() + (e.getX() - firstPoint.getX()));
+						}
+						else {
+							x = (toMove.getPosition().getX() - (firstPoint.getX() - e.getX()));
+						}
+						if ( firstPoint.getY() <= e.getY()) {
+							y = (toMove.getPosition().getY() + (e.getY() - firstPoint.getY()));
+						}
+						else {
+							y = (toMove.getPosition().getY() - (firstPoint.getY() - e.getY()));
+						}
+						newPosition.setLocation(x, y);
+						Shape moved;
+						try {
+							moved = (Shape) toMove.clone();
+							moved.setPosition(newPosition);
+							engine.updateShape(toMove, moved);
+							engine.removeShape(toMove);
+						} catch (CloneNotSupportedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						toMove = null;
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+					}
+				}
 				engine.refresh(canvas.getGraphics());
 			}
 		});
 		
-		
-		///// Start Buttons
+		// Start Buttons
 		JButton btnLine = new JButton("Line Segment");
 		btnLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -271,7 +354,7 @@ public class GUI {
 				btnColor.setBackground(clr);
 			}
 		});
-		btnColor.setBounds(1262, 623, 50, 50);
+		btnColor.setBounds(640, 11, 50, 50);
 		frame.getContentPane().add(btnColor);
 		
 		JButton btnFillColor = new JButton("");
@@ -282,35 +365,55 @@ public class GUI {
 				btnFillColor.setBackground(fillClr);
 			}
 		});
-		btnFillColor.setBounds(1334, 623, 50, 50);
+		btnFillColor.setBounds(702, 11, 50, 50);
 		frame.getContentPane().add(btnFillColor);
 		
 		JButton btnUndo = new JButton("Undo");
 		btnUndo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				engine.undo();
+				canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 				engine.refresh(canvas.getGraphics());
 			}
 		});
-		btnUndo.setBounds(1260, 282, 89, 23);
+		btnUndo.setBounds(1290, 282, 70, 23);
 		frame.getContentPane().add(btnUndo);
 		
 		JButton btnRedo = new JButton("Redo");
 		btnRedo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				engine.redo();
+				canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 				engine.refresh(canvas.getGraphics());
 			}
 		});
-		btnRedo.setBounds(1260, 319, 89, 23);
+		btnRedo.setBounds(1290, 319, 70, 23);
 		frame.getContentPane().add(btnRedo);
 		
 		JButton btnSave = new JButton("Save");
-		btnSave.setBounds(1260, 356, 89, 23);
+		btnSave.setBounds(1290, 356, 70, 23);
 		frame.getContentPane().add(btnSave);
 		
 		JButton btnLoad = new JButton("Load");
-		btnLoad.setBounds(1260, 393, 89, 23);
+		btnLoad.setBounds(1290, 393, 70, 23);
 		frame.getContentPane().add(btnLoad);
+		
+		JButton btnSetColor = new JButton("Set Color");
+		btnSetColor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				action = 8 ;
+			}
+		});
+		btnSetColor.setBounds(640, 72, 112, 23);
+		frame.getContentPane().add(btnSetColor);
+		
+		JButton btnMove = new JButton("Move");
+		btnMove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				action = 9 ;
+			}
+		});
+		btnMove.setBounds(1290, 436, 70, 23);
+		frame.getContentPane().add(btnMove);
 	}
 }

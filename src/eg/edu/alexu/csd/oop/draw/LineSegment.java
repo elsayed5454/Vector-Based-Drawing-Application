@@ -29,7 +29,7 @@ public class LineSegment extends GeometricShapes {
 	
 	@Override
 	public void draw(Graphics canvas) {
-		((Graphics2D)canvas).setStroke(new BasicStroke(0.2f));
+		((Graphics2D)canvas).setStroke(new BasicStroke(5f));
 		((Graphics2D)canvas).setColor(getColor());
 		((Graphics2D)canvas).drawLine(point1.x, point1.y, point2.x, point2.y);
 	}

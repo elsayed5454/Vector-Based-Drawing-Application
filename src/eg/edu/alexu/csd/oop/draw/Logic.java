@@ -27,18 +27,13 @@ public class Logic implements DrawingEngine {
 
 	@Override
 	public void removeShape(Shape shape) {
-		if (shapes.contains(shape)) {
-			shapes.remove(shape);
-			undoShapes.push(shape);
-		}
+		shapes.removeIf(element -> (shape.getPosition() == element.getPosition()));
 	}
 
 	@Override
 	public void updateShape(Shape oldShape, Shape newShape) {
-		if (shapes.contains(oldShape)) {
-			shapes.add(newShape);
-			undoShapes.push(newShape);
-		}
+		shapes.add(newShape);
+		undoShapes.push(newShape);
 	}
 
 	@Override
@@ -65,6 +60,9 @@ public class Logic implements DrawingEngine {
 			else {
 				shapes.add(shape);
 			}
+		}
+		else if (!shapes.isEmpty()){
+			shapes.clear();
 		}
 	}
 
