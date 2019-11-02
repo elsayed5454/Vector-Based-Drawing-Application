@@ -31,7 +31,9 @@ public class Triangle extends Polygons {
 		this.setPosition(topLeft);
 		this.prop.put("width", maxX - minX);
 		this.prop.put("height", maxY - minY);
-		setProperties(prop);
+		
+		this.setPosition(p1);
+		this.setProperties(prop);
 	}
 	
 	@Override

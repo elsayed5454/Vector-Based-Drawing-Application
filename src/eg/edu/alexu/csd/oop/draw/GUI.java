@@ -31,7 +31,7 @@ public class GUI {
 
 	DrawingEngine engine = new Logic();
 	private int action = -1;
-	boolean secondClick = false, thirdClick = false;
+	boolean secondClick = false, thirdClick = false, actionAttempt = false;
 	Point firstPoint, secondPoint;
 	Color clr = Color.BLACK, fillClr = Color.WHITE;
 	Shape toMove = null;
@@ -50,7 +50,7 @@ public class GUI {
 		frame.getContentPane().add(canvas);
 		canvas.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				// Line action
 				if (action == 1) {
 					if (!secondClick) {
@@ -62,6 +62,7 @@ public class GUI {
 						line.setColor(clr);
 						engine.addShape(line);
 						secondClick = false;
+						action = -1;
 					}
 				}
 				// Circle action
@@ -81,6 +82,7 @@ public class GUI {
 						circle.setFillColor(fillClr);
 						engine.addShape(circle);
 						secondClick = false;
+						action = -1;
 					}
 				}
 				// Ellipse action
@@ -105,6 +107,7 @@ public class GUI {
 						engine.addShape(ellipse);
 						secondClick = false;
 						thirdClick = false;
+						action = -1;
 					}
 				}
 				// Triangle action
@@ -124,6 +127,7 @@ public class GUI {
 						engine.addShape(triangle);
 						secondClick = false;
 						thirdClick = false;
+						action = -1;
 					}
 				}
 				// Rectangle action
@@ -145,6 +149,7 @@ public class GUI {
 						rectangle.setFillColor(fillClr);
 						engine.addShape(rectangle);
 						secondClick = false;
+						action = -1;
 					}
 				}
 				// Square action
@@ -166,27 +171,25 @@ public class GUI {
 						square.setPosition(topLeft);
 						engine.addShape(square);
 						secondClick = false;
+						action = -1;
 					}
 				}
 				// Remove action
 				else if (action == 7) {
 					Point selected = e.getPoint();
 					Shape[] shapes = engine.getShapes();
-					double minX, minY, maxX, maxY;
 					for (int i = shapes.length -1 ; i>= 0 ; i--) {
-						
-						minX = shapes[i].getPosition().getX();
-						minY = shapes[i].getPosition().getY();
-						maxX = minX + shapes[i].getProperties().get("width");
-						maxY = minY + shapes[i].getProperties().get("height");
-								
-						if (selected.getX() >= minX && selected.getX() <= maxX && selected.getY() >= minY && selected.getY() <= maxY) {
-							engine.removeShape(shapes[i]);
-							canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-							break;
+						if (shapes[i].getClass().toString().contains("LineSegment")) {
+							if (Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) <= shapes[i].getProperties().get("length") && Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) <= shapes[i].getProperties().get("length")) {
+								engine.removeShape(shapes[i]);
+								break;
+							}
 						}
 					}
+					canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+					action = -1;
 				}
+				//coloring
 				else if (action == 8) {
 					Point selected = e.getPoint();
 					Shape[] shapes = engine.getShapes();
@@ -208,68 +211,62 @@ public class GUI {
 							} catch (CloneNotSupportedException e1) {
 								e1.printStackTrace();
 							}
+							action = -1;
 							break;
 						}
 					}
 				}
-				engine.refresh(canvas.getGraphics());
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (action == 9) {
+				else {
+					actionAttempt = true;
 					firstPoint = e.getPoint();
-					Shape[] shapes = engine.getShapes();
-					double minX, minY, maxX, maxY;
-					for (int i = shapes.length -1 ; i>= 0 ; i--) {
-						
-						minX = shapes[i].getPosition().getX();
-						minY = shapes[i].getPosition().getY();
-						maxX = minX + shapes[i].getProperties().get("width");
-						maxY = minY + shapes[i].getProperties().get("height");
-								
-						if (firstPoint.getX() >= minX && firstPoint.getX() <= maxX && firstPoint.getY() >= minY && firstPoint.getY() <= maxY) {
-							toMove = shapes[i];
-							break;
-						}
-					}
 				}
 				engine.refresh(canvas.getGraphics());
 			}
-			
+					
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (action == 9) {
-					double x , y ;
+				if (actionAttempt) {
+					Shape[] shapes = engine.getShapes();
+					for (int i = shapes.length -1 ; i>= 0 ; i--) {
+						if (shapes[i].getClass().toString().contains("LineSegment")) {
+							if (Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) <= shapes[i].getProperties().get("length") && Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) <= shapes[i].getProperties().get("length")) {
+								toMove = shapes[i];
+								break;
+							}
+						}
+					}
 					if (toMove != null) {
-						Point newPosition = new Point();
-						if ( firstPoint.getX() <= e.getX()) {
-							x = (toMove.getPosition().getX() + (e.getX() - firstPoint.getX()));
-						}
-						else {
-							x = (toMove.getPosition().getX() - (firstPoint.getX() - e.getX()));
-						}
-						if ( firstPoint.getY() <= e.getY()) {
-							y = (toMove.getPosition().getY() + (e.getY() - firstPoint.getY()));
-						}
-						else {
-							y = (toMove.getPosition().getY() - (firstPoint.getY() - e.getY()));
-						}
-						newPosition.setLocation(x, y);
-						Shape moved;
-						try {
-							moved = (Shape) toMove.clone();
-							moved.setPosition(newPosition);
+						if (toMove.getClass().toString().contains("LineSegment")) {
+							double x1,y1,x2,y2;
+							if (firstPoint.getX() <= e.getX()) {
+								x1 = toMove.getProperties().get("x1") + ( e.getX() - firstPoint.getX() );
+								x2 = toMove.getProperties().get("x2") + ( e.getX() - firstPoint.getX() );
+							}
+							else {
+								x1 = toMove.getProperties().get("x1") - ( firstPoint.getX() - e.getX() );
+								x2 = toMove.getProperties().get("x2") - ( firstPoint.getX() - e.getX() );
+							}
+							if (firstPoint.getY() <= e.getY()) {
+								y1 = toMove.getProperties().get("y1") + ( e.getY() - firstPoint.getY() );
+								y2 = toMove.getProperties().get("y2") + ( e.getY() - firstPoint.getY() );
+							}
+							else {
+								y1 = toMove.getProperties().get("y1") - ( firstPoint.getY() - e.getY() );
+								y2 = toMove.getProperties().get("y2") - ( firstPoint.getY() - e.getY() );
+							}
+							Point first = new Point();
+							Point second = new Point();
+							first.setLocation(x1,y1);
+							second.setLocation(x2,y2);
+							Shape moved = new LineSegment(first,second);
 							engine.updateShape(toMove, moved);
-							engine.removeShape(toMove);
-						} catch (CloneNotSupportedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
 						}
 						toMove = null;
 						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 					}
+					
 				}
+				actionAttempt = false;
 				engine.refresh(canvas.getGraphics());
 			}
 		});

@@ -60,7 +60,12 @@ public class GeometricShapes implements Shape {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException{
-		return null;
+		Shape cloned = this;
+		cloned.setPosition(this.getPosition());
+		cloned.setProperties(this.getProperties());
+		cloned.setColor(this.getColor());
+		cloned.setFillColor(this.getFillColor());
+		return cloned;
 	}
 
 }
