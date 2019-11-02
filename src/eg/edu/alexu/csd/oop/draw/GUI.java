@@ -229,6 +229,7 @@ public class GUI {
 						}
 					}
 				}
+				// Move attempt
 				else {
 					actionAttempt = true;
 					firstPoint = e.getPoint();
@@ -242,7 +243,8 @@ public class GUI {
 					Shape[] shapes = engine.getShapes();
 					for (int i = shapes.length -1 ; i>= 0 ; i--) {
 						if (shapes[i].getClass().toString().contains("LineSegment")) {
-							if (Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) <= shapes[i].getProperties().get("length") && Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) <= shapes[i].getProperties().get("length")) {
+							if (Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) <= shapes[i].getProperties().get("length") 
+								&& Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) <= shapes[i].getProperties().get("length")) {
 								toMove = shapes[i];
 								break;
 							}

@@ -6,11 +6,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 
 public class Logic implements DrawingEngine {
 
-	private List<Shape> shapes = new ArrayList<Shape>();
+	private ArrayList<Shape> shapes = new ArrayList<Shape>();
+	private Stack<ArrayList<Shape>> undoShapes = new Stack<ArrayList<Shape>>();
+	private Stack<ArrayList<Shape>> redoShapes = new Stack<ArrayList<Shape>>();
+
 	
 	@Override
 	public void refresh(Graphics canvas) {
@@ -22,23 +26,43 @@ public class Logic implements DrawingEngine {
 	@Override
 	public void addShape(Shape shape) {
 		shapes.add(shape);
+		if (undoShapes.size() < 20) {
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+		else {
+			undoShapes.remove(0);
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
 	}
 
 	@Override
 	public void removeShape(Shape shape) {
 		shapes.remove(shape);
+		if (undoShapes.size() < 20) {
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+		else {
+			undoShapes.remove(0);
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
 	}
 
 	@Override
 	public void updateShape(Shape oldShape, Shape newShape) {
 		shapes.remove(oldShape);
 		shapes.add(newShape);
+		if (undoShapes.size() < 20) {
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+		else {
+			undoShapes.remove(0);
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
 	}
 
 	@Override
 	public Shape[] getShapes() {
-		Shape[] drawnShapes = new Shape[shapes.size()];
-		return shapes.toArray(drawnShapes);
+		return shapes.toArray(new Shape[shapes.size()]);
 	}
 
 	@Override
@@ -48,12 +72,35 @@ public class Logic implements DrawingEngine {
 
 	@Override
 	public void undo() {
-		
+		if (!undoShapes.isEmpty()) {
+			if (redoShapes.size() < 20) {
+				redoShapes.push(new ArrayList<Shape>(undoShapes.pop()));
+			}
+			else {
+				redoShapes.remove(0);
+				redoShapes.push(new ArrayList<Shape>(undoShapes.pop()));
+			}
+			if (!undoShapes.isEmpty()) {
+				shapes = new ArrayList<Shape>(undoShapes.peek());
+			}
+			else {
+				shapes = new ArrayList<Shape>();
+			}
+		}
 	}
 
 	@Override
 	public void redo() {
-				
+		if (!redoShapes.isEmpty()) {
+			shapes = new ArrayList<Shape>(redoShapes.peek());
+			if (undoShapes.size() < 20) {
+				undoShapes.push(new ArrayList<Shape>(redoShapes.pop()));
+			}
+			else {
+				undoShapes.remove(0);
+				undoShapes.push(new ArrayList<Shape>(redoShapes.pop()));
+			}
+		}
 	}
 
 	@Override
