@@ -8,31 +8,20 @@ import java.awt.Point;
 
 public class Triangle extends Polygons {
 	
+	private Triangle () {
+		
+	}
+	
 	public Triangle(Point p1, Point p2, Point p3) {
+		this.setPosition(p1);
 		this.prop.put("x1", p1.getX());
 		this.prop.put("y1", p1.getY());
 		this.prop.put("x2", p2.getX());
 		this.prop.put("y2", p2.getY());
 		this.prop.put("x3", p3.getX());
 		this.prop.put("y3", p3.getY());
-		
-		double minX = Math.min(p1.getX(), p2.getX());
-		minX = Math.min(minX, p3.getX());
-		double maxX = Math.max(p1.getX(), p2.getX());
-		maxX = Math.max(maxX, p3.getX());
-		
-		double minY = Math.min(p1.getY(), p2.getY());
-		minY = Math.min(minY, p3.getY());
-		double maxY = Math.max(p1.getY(), p2.getY());
-		maxY = Math.max(maxY, p3.getY());
-		
-		Point topLeft = new Point();
-		topLeft.setLocation(minX, minY);
-		this.setPosition(topLeft);
-		this.prop.put("width", maxX - minX);
-		this.prop.put("height", maxY - minY);
-		
-		this.setPosition(p1);
+		double area = Math.abs((((p1.getX())*(p2.getY()-p3.getY()))+((p2.getX())*(p3.getY()-p1.getY()))+((p3.getX())*(p1.getY()-p2.getY())))/2.0);
+		this.prop.put("area", area);
 		this.setProperties(prop);
 	}
 	
@@ -45,5 +34,15 @@ public class Triangle extends Polygons {
 		((Graphics2D)canvas).setColor(getFillColor());
 		((Graphics2D)canvas).drawPolygon(x, y, 3);
 		((Graphics2D)canvas).fillPolygon(x, y, 3);
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Shape cloned = new Triangle();
+		cloned.setColor(this.getColor());
+		cloned.setFillColor(this.getFillColor());
+		cloned.setPosition(this.getPosition());
+		cloned.setProperties(this.getProperties());
+		return cloned;
 	}
 }

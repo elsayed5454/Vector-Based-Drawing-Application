@@ -38,6 +38,55 @@ public class GUI {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	
+	private Shape contains(Point selected) {
+		Shape[] shapes = engine.getShapes();
+		for (int i = shapes.length -1 ; i>= 0 ; i--) {
+			if (shapes[i].getClass().toString().contains("LineSegment")) {
+				if (Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) + Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) >= shapes[i].getProperties().get("length") * 0.998 
+				&& Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) + Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) <= shapes[i].getProperties().get("length") * 1.001 ) {
+					return shapes[i];
+				}
+			}
+			else if (shapes[i].getClass().toString().contains("Triangle")) {
+				if(Math.abs((((selected.getX())*(shapes[i].getProperties().get("y2")-shapes[i].getProperties().get("y3")))+((shapes[i].getProperties().get("x2"))*(shapes[i].getProperties().get("y3")-selected.getY()))+((shapes[i].getProperties().get("x3"))*(selected.getY()-shapes[i].getProperties().get("y2"))))/2.0) + 
+				 Math.abs((((shapes[i].getProperties().get("x1"))*(selected.getY()-shapes[i].getProperties().get("y3")))+((selected.getX())*(shapes[i].getProperties().get("y3")-shapes[i].getProperties().get("y1")))+((shapes[i].getProperties().get("x3"))*(shapes[i].getProperties().get("y1")-selected.getY())))/2.0) +
+				 Math.abs((((shapes[i].getProperties().get("x1"))*(shapes[i].getProperties().get("y2")-selected.getY()))+((shapes[i].getProperties().get("x2"))*(selected.getY()-shapes[i].getProperties().get("y1")))+((selected.getX())*(shapes[i].getProperties().get("y1")-shapes[i].getProperties().get("y2"))))/2.0) <= shapes[i].getProperties().get("area") * 1.001
+				 && Math.abs((((selected.getX())*(shapes[i].getProperties().get("y2")-shapes[i].getProperties().get("y3")))+((shapes[i].getProperties().get("x2"))*(shapes[i].getProperties().get("y3")-selected.getY()))+((shapes[i].getProperties().get("x3"))*(selected.getY()-shapes[i].getProperties().get("y2"))))/2.0) + 
+				 Math.abs((((shapes[i].getProperties().get("x1"))*(selected.getY()-shapes[i].getProperties().get("y3")))+((selected.getX())*(shapes[i].getProperties().get("y3")-shapes[i].getProperties().get("y1")))+((shapes[i].getProperties().get("x3"))*(shapes[i].getProperties().get("y1")-selected.getY())))/2.0) +
+				 Math.abs((((shapes[i].getProperties().get("x1"))*(shapes[i].getProperties().get("y2")-selected.getY()))+((shapes[i].getProperties().get("x2"))*(selected.getY()-shapes[i].getProperties().get("y1")))+((selected.getX())*(shapes[i].getProperties().get("y1")-shapes[i].getProperties().get("y2"))))/2.0) >= shapes[i].getProperties().get("area") * 0.998){
+					return shapes[i];
+				}
+			}
+			else if (shapes[i].getClass().toString().contains("Circle")) {
+				if (Point.distance(selected.getX(), selected.getY(), shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2, shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2) <= shapes[i].getProperties().get("width") / 2) {
+					return shapes[i];
+
+				}
+			}
+			else if (shapes[i].getClass().toString().contains("Ellipse")) {
+				if ((Math.sqrt(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2)) / Math.sqrt(shapes[i].getProperties().get("width")/2))+(Math.sqrt(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2)) / Math.sqrt(shapes[i].getProperties().get("height")/2)) <= 1) {
+					return shapes[i];
+
+				}
+			}
+			else if (shapes[i].getClass().toString().contains("Rectangle")) {
+				if (Math.abs(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2)) <= shapes[i].getProperties().get("width")/2 
+				&& Math.abs(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2)) <= shapes[i].getProperties().get("height")/2) {
+					return shapes[i];
+
+				}
+			}
+			else if (shapes[i].getClass().toString().contains("Square")) {
+				if (Math.abs(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2)) <= shapes[i].getProperties().get("width")/2 
+						&& Math.abs(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2)) <= shapes[i].getProperties().get("height")/2) {
+					return shapes[i];
+				}
+			}
+		}
+		return null;
+	}
+	
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(0, 0,frame.getToolkit().getScreenSize().width + 30 ,frame.getToolkit().getScreenSize().height - 30);
@@ -74,10 +123,9 @@ public class GUI {
 					else {
 						Point boundary = e.getPoint();
 						double radius = Point.distance(firstPoint.getX(), firstPoint.getY(), boundary.getX(), boundary.getY());
-						Shape circle = new Circle(radius*2);
 						Point topLeft = new Point();
 						topLeft.setLocation(firstPoint.getX() - radius, firstPoint.getY() - radius);
-						circle.setPosition(topLeft);
+						Shape circle = new Circle(radius*2, topLeft);
 						circle.setColor(clr);
 						circle.setFillColor(fillClr);
 						engine.addShape(circle);
@@ -98,10 +146,9 @@ public class GUI {
 					else {
 						double halfWidth = Math.abs(firstPoint.getX() - secondPoint.getX());
 						double halfHeight = Math.abs(firstPoint.getY() - e.getPoint().getY());
-						Shape ellipse = new Ellipse(2*halfWidth, 2*halfHeight);
 						Point topLeft = new Point();
 						topLeft.setLocation(firstPoint.getX() - halfWidth, firstPoint.getY() - halfHeight);
-						ellipse.setPosition(topLeft);
+						Shape ellipse = new Ellipse(2*halfWidth, 2*halfHeight, topLeft);
 						ellipse.setColor(clr);
 						ellipse.setFillColor(fillClr);
 						engine.addShape(ellipse);
@@ -143,8 +190,7 @@ public class GUI {
 						topLeft.setLocation(minX, minY);
 						double width = Math.abs(firstPoint.getX() - e.getX());
 						double height = Math.abs(firstPoint.getY() - e.getY());
-						Shape rectangle = new Rectangle(width, height);
-						rectangle.setPosition(topLeft);
+						Shape rectangle = new Rectangle(width, height, topLeft);
 						rectangle.setColor(clr);
 						rectangle.setFillColor(fillClr);
 						engine.addShape(rectangle);
@@ -165,10 +211,9 @@ public class GUI {
 						topLeft.setLocation(minX, minY);
 						// Diagonal * cos(45 degrees) = side of square
 						double side = Point.distance(firstPoint.getX(), firstPoint.getY(), e.getX(), e.getY()) * Math.cos(Math.toRadians(45));
-						Shape square = new Square(side);
+						Shape square = new Square(side, topLeft);
 						square.setColor(clr);
 						square.setFillColor(fillClr);
-						square.setPosition(topLeft);
 						engine.addShape(square);
 						secondClick = false;
 						action = -1;
@@ -177,14 +222,9 @@ public class GUI {
 				// Remove action
 				else if (action == 7) {
 					Point selected = e.getPoint();
-					Shape[] shapes = engine.getShapes();
-					for (int i = shapes.length -1 ; i>= 0 ; i--) {
-						if (shapes[i].getClass().toString().contains("LineSegment")) {
-							if (Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) <= shapes[i].getProperties().get("length") && Point.distance(selected.getX(), selected.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) <= shapes[i].getProperties().get("length")) {
-								engine.removeShape(shapes[i]);
-								break;
-							}
-						}
+					Shape found = contains(selected);
+					if (found != null) {
+						engine.removeShape(found);
 					}
 					canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 					action = -1;
@@ -192,29 +232,19 @@ public class GUI {
 				//coloring
 				else if (action == 8) {
 					Point selected = e.getPoint();
-					Shape[] shapes = engine.getShapes();
-					double minX, minY, maxX, maxY;
-					for (int i = shapes.length - 1; i >= 0; i--) {
-						
-						minX = shapes[i].getPosition().getX();
-						minY = shapes[i].getPosition().getY();
-						maxX = minX + shapes[i].getProperties().get("width");
-						maxY = minY + shapes[i].getProperties().get("height");
-								
-						if (selected.getX() >= minX && selected.getX() <= maxX && selected.getY() >= minY && selected.getY() <= maxY && (shapes[i].getColor() != clr || shapes[i].getFillColor() != fillClr)) {
-							try {
-								Shape colored = (Shape) shapes[i].clone();
-								colored.setColor(clr);
-								colored.setFillColor(fillClr);
-								engine.updateShape(shapes[i], colored);
-								canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-							} catch (CloneNotSupportedException e1) {
-								e1.printStackTrace();
-							}
-							action = -1;
-							break;
+					Shape found = contains(selected);
+					if (found != null) {
+						try {
+							Shape colored = (Shape) found.clone();
+							colored.setColor(clr);
+							colored.setFillColor(fillClr);
+							engine.updateShape(found, colored);
+						} catch (CloneNotSupportedException e1) {
+							e1.printStackTrace();
 						}
 					}
+					action = -1;
+					canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 				}
 				else {
 					actionAttempt = true;
@@ -226,15 +256,7 @@ public class GUI {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (actionAttempt) {
-					Shape[] shapes = engine.getShapes();
-					for (int i = shapes.length -1 ; i>= 0 ; i--) {
-						if (shapes[i].getClass().toString().contains("LineSegment")) {
-							if (Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x1"), shapes[i].getProperties().get("y1")) <= shapes[i].getProperties().get("length") && Point.distance(firstPoint.getX(), firstPoint.getY(), shapes[i].getProperties().get("x2"), shapes[i].getProperties().get("y2")) <= shapes[i].getProperties().get("length")) {
-								toMove = shapes[i];
-								break;
-							}
-						}
-					}
+					toMove = contains(firstPoint);
 					if (toMove != null) {
 						if (toMove.getClass().toString().contains("LineSegment")) {
 							double x1,y1,x2,y2;
@@ -260,6 +282,61 @@ public class GUI {
 							second.setLocation(x2,y2);
 							Shape moved = new LineSegment(first,second);
 							engine.updateShape(toMove, moved);
+						}
+						else if (toMove.getClass().toString().contains("Triangle")) {
+							double x1,y1,x2,y2,x3,y3;
+							if (firstPoint.getX() <= e.getX()) {
+								x1 = toMove.getProperties().get("x1") + ( e.getX() - firstPoint.getX() );
+								x2 = toMove.getProperties().get("x2") + ( e.getX() - firstPoint.getX() );
+								x3 = toMove.getProperties().get("x3") + ( e.getX() - firstPoint.getX() );
+							}
+							else {
+								x1 = toMove.getProperties().get("x1") - ( firstPoint.getX() - e.getX() );
+								x2 = toMove.getProperties().get("x2") - ( firstPoint.getX() - e.getX() );
+								x3 = toMove.getProperties().get("x3") - ( firstPoint.getX() - e.getX() );
+							}
+							if (firstPoint.getY() <= e.getY()) {
+								y1 = toMove.getProperties().get("y1") + ( e.getY() - firstPoint.getY() );
+								y2 = toMove.getProperties().get("y2") + ( e.getY() - firstPoint.getY() );
+								y3 = toMove.getProperties().get("y3") + ( e.getY() - firstPoint.getY() );
+							}
+							else {
+								y1 = toMove.getProperties().get("y1") - ( firstPoint.getY() - e.getY() );
+								y2 = toMove.getProperties().get("y2") - ( firstPoint.getY() - e.getY() );
+								y3 = toMove.getProperties().get("y3") - ( firstPoint.getY() - e.getY() );
+							}
+							Point first = new Point();
+							Point second = new Point();
+							Point third = new Point();
+							first.setLocation(x1,y1);
+							second.setLocation(x2,y2);
+							third.setLocation(x3,y3);
+							Shape moved = new Triangle(first,second,third);
+							engine.updateShape(toMove, moved);
+						}
+						else {
+							double x1,y1;
+							if (firstPoint.getX() <= e.getX()) {
+								x1 = toMove.getPosition().getX() + ( e.getX() - firstPoint.getX() );
+							}
+							else {
+								x1 = toMove.getPosition().getX() - ( firstPoint.getX() - e.getX() );
+							}
+							if (firstPoint.getY() <= e.getY()) {
+								y1 = toMove.getPosition().getY() + ( e.getY() - firstPoint.getY() );
+							}
+							else {
+								y1 = toMove.getPosition().getY() - ( firstPoint.getY() - e.getY() );
+							}
+							Point newPosition = new Point();
+							newPosition.setLocation(x1,y1);
+							try {
+								Shape moved = (Shape) toMove.clone();
+								moved.setPosition(newPosition);
+								engine.updateShape(toMove, moved);
+							} catch (CloneNotSupportedException e1) {
+								e1.printStackTrace();
+							}
 						}
 						toMove = null;
 						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -403,14 +480,5 @@ public class GUI {
 		});
 		btnSetColor.setBounds(640, 72, 112, 23);
 		frame.getContentPane().add(btnSetColor);
-		
-		JButton btnMove = new JButton("Move");
-		btnMove.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				action = 9 ;
-			}
-		});
-		btnMove.setBounds(1290, 436, 70, 23);
-		frame.getContentPane().add(btnMove);
 	}
 }
