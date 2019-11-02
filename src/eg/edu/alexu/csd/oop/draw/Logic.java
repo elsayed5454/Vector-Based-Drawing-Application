@@ -1,6 +1,9 @@
 package eg.edu.alexu.csd.oop.draw;
 
 import java.awt.Graphics;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -83,7 +86,31 @@ public class Logic implements DrawingEngine {
 
 	@Override
 	public void save(String path) {
-
+		/*File file = new File(path, "save.json");
+		try {
+			FileWriter writer = new FileWriter(file);
+			writer.write("{\"shapes\": " + System.lineSeparator());
+			for (int i = 0; i < shapes.size(); i++) {
+				writer.write("[{\"className\": \"" + shapes.get(i).getClass().toString() + "\", ");
+				writer.write("\"position\": \"" + shapes.get(i).getPosition().toString() + "\", ");
+				writer.write("\"color\": \"" + shapes.get(i).getColor().toString() + "\", ");
+				writer.write("\"fillColor\": \"" + shapes.get(i).getFillColor().toString() + "\", ");
+				writer.write("\"width\": \"" + shapes.get(i).getProperties().get("width").toString() + "\", ");
+				writer.write("\"height\": \"" + shapes.get(i).getProperties().get("height").toString() + "\"}]");
+				if (i != shapes.size() - 1) {
+					writer.write("," + System.lineSeparator());
+				}
+				else {
+					writer.write(System.lineSeparator());
+				}
+				
+			}
+			writer.write("}");
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 	}
 
 	@Override

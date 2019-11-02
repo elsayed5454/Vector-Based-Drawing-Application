@@ -1,8 +1,21 @@
 package eg.edu.alexu.csd.oop.draw;
 
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 public class GUI {
 	
@@ -187,6 +200,7 @@ public class GUI {
 						}
 					}
 				}
+				// Set color
 				else if (action == 8) {
 					Point selected = e.getPoint();
 					Shape[] shapes = engine.getShapes();
@@ -391,6 +405,20 @@ public class GUI {
 		frame.getContentPane().add(btnRedo);
 		
 		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter restrict = new FileNameExtensionFilter("JSON Files (*.json)", "json");
+				fileChooser.addChoosableFileFilter(restrict);
+				fileChooser.setSelectedFile(new File("save.json"));
+				
+				if (fileChooser.showSaveDialog(btnSave) == JFileChooser.APPROVE_OPTION) {
+					engine.save(fileChooser.getSelectedFile().getPath() + File.separatorChar + fileChooser.getSelectedFile().getName());
+				}
+			}
+		});
 		btnSave.setBounds(1290, 356, 70, 23);
 		frame.getContentPane().add(btnSave);
 		
