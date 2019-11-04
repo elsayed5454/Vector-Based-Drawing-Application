@@ -8,6 +8,9 @@ import java.awt.Graphics2D;
 public class EllipticalShapes extends GeometricShapes {
 	
 	public EllipticalShapes () {
+		this.prop.put("width", 0.0);
+		this.prop.put("height", 0.0);
+		setProperties(prop);
 	}	
 	
 	@Override

@@ -3,6 +3,17 @@ package eg.edu.alexu.csd.oop.draw;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class GUI {
 	
@@ -65,7 +76,7 @@ public class GUI {
 				}
 			}
 			else if (shapes[i].getClass().toString().contains("Ellipse")) {
-				if ((Math.sqrt(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2)) / Math.sqrt(shapes[i].getProperties().get("width")/2))+(Math.sqrt(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2)) / Math.sqrt(shapes[i].getProperties().get("height")/2)) <= 1) {
+				if ((Math.pow(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2) , 2.0) / Math.pow(shapes[i].getProperties().get("width")/2 , 2.0))+(Math.pow(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2) , 2.0) / Math.pow(shapes[i].getProperties().get("height")/2 , 2.0)) <= 1) {
 					return shapes[i];
 
 				}
@@ -257,7 +268,27 @@ public class GUI {
 			public void mouseReleased(MouseEvent e) {
 				if (actionAttempt) {
 					toMove = contains(firstPoint);
-					if (toMove != null) {
+					Shape toResize = contains(e.getPoint());
+					if (toMove == toResize) {
+						if (toMove.getClass().toString().contains("LineSegment")) {
+							if (Point.distance(firstPoint.getX(), firstPoint.getY(), toMove.getProperties().get("x1"), toMove.getProperties().get("y1")) 
+								< Point.distance(firstPoint.getX(), firstPoint.getY(), toMove.getProperties().get("x2"), toMove.getProperties().get("y2")) ) {
+								Point second = new Point();
+								second.setLocation(toMove.getProperties().get("x2"),toMove.getProperties().get("y2"));
+								Shape resizedLine = new LineSegment(e.getPoint(), second);
+								engine.updateShape(toMove, resizedLine);
+							}
+							else {
+								Point first = new Point();
+								first.setLocation(toMove.getProperties().get("x1"),toMove.getProperties().get("y1"));
+								Shape resizedLine = new LineSegment(first, e.getPoint());
+								engine.updateShape(toMove, resizedLine);
+							}
+							
+						}
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+					}
+					else if (toMove != null) {
 						if (toMove.getClass().toString().contains("LineSegment")) {
 							double x1,y1,x2,y2;
 							if (firstPoint.getX() <= e.getX()) {
@@ -450,7 +481,7 @@ public class GUI {
 				engine.refresh(canvas.getGraphics());
 			}
 		});
-		btnUndo.setBounds(1290, 282, 70, 23);
+		btnUndo.setBounds(1289, 282, 71, 23);
 		frame.getContentPane().add(btnUndo);
 		
 		JButton btnRedo = new JButton("Redo");
@@ -461,15 +492,15 @@ public class GUI {
 				engine.refresh(canvas.getGraphics());
 			}
 		});
-		btnRedo.setBounds(1290, 319, 70, 23);
+		btnRedo.setBounds(1289, 319, 71, 23);
 		frame.getContentPane().add(btnRedo);
 		
 		JButton btnSave = new JButton("Save");
-		btnSave.setBounds(1290, 356, 70, 23);
+		btnSave.setBounds(1289, 356, 71, 23);
 		frame.getContentPane().add(btnSave);
 		
 		JButton btnLoad = new JButton("Load");
-		btnLoad.setBounds(1290, 393, 70, 23);
+		btnLoad.setBounds(1289, 393, 71, 23);
 		frame.getContentPane().add(btnLoad);
 		
 		JButton btnSetColor = new JButton("Set Color");
@@ -480,5 +511,29 @@ public class GUI {
 		});
 		btnSetColor.setBounds(640, 72, 112, 23);
 		frame.getContentPane().add(btnSetColor);
+		
+		JButton btnImport = new JButton("Import");
+		btnImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				URL url;
+				try {
+					url = new URL(String.format("jar:file:%s!/", "RoundRectangle"));
+					URLClassLoader.newInstance(new URL[] {url} , Shape.class.getClassLoader());
+					
+					engine.getSupportedShapes();
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				} catch (SecurityException e1) {
+					e1.printStackTrace();
+				
+				} catch (IllegalArgumentException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnImport.setBounds(1289, 431, 71, 23);
+		frame.getContentPane().add(btnImport);
 	}
 }

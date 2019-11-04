@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public class Rectangle extends Polygons {
 	
-	private Rectangle() {
+	public Rectangle() {
 		
 	}
 	

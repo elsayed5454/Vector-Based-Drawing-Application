@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public class Square extends Polygons {
 	
-	private Square() {
+	public Square() {
 		
 	}
 	

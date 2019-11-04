@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public class Circle extends EllipticalShapes {
 
-	private Circle () {
+	public Circle () {
 		
 	}
 	

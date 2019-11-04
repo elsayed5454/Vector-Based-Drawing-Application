@@ -13,6 +13,13 @@ public class GeometricShapes implements Shape {
 	protected Color clr;
 	protected Color fillClr;
 	
+	public GeometricShapes() {
+		this.prop.put("width", 0.0);
+		this.prop.put("height", 0.0);
+		this.prop.put("length", 0.0);
+		this.setProperties(prop);
+	}
+	
 	@Override
 	public void setPosition(Point position) {
 		this.point = position;

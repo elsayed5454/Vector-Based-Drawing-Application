@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public class Ellipse extends EllipticalShapes {
 	
-	private Ellipse () {
+	public Ellipse () {
 		
 	}
 	

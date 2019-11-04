@@ -8,7 +8,7 @@ import java.awt.Point;
 
 public class Triangle extends Polygons {
 	
-	private Triangle () {
+	public Triangle () {
 		
 	}
 	
