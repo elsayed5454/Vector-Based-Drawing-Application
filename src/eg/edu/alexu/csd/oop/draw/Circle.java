@@ -8,7 +8,7 @@ public class Circle extends EllipticalShapes {
 		
 	}
 	
-	public Circle (double diameter, Point topLeft) {
+	public Circle (Point topLeft, double diameter) {
 		this.setPosition(topLeft);
 		this.prop.put("width", diameter);
 		this.prop.put("height", diameter);

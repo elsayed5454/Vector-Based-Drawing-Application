@@ -8,7 +8,7 @@ public class Square extends Polygons {
 		
 	}
 	
-	public Square(double side, Point topLeft) {
+	public Square(Point topLeft, double side) {
 		this.setPosition(topLeft);
 		this.prop.put("width", side);
 		this.prop.put("height", side);

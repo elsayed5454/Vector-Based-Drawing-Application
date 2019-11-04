@@ -4,15 +4,19 @@ import java.awt.Graphics;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.Annotation;
+=======
+>>>>>>> 7c18d23dae7cc107e8ec14cf4a534be095e68317
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.ServiceLoader;
 import java.util.Stack;
 import java.util.jar.JarEntry;
@@ -76,6 +80,58 @@ public class Logic implements DrawingEngine {
     }
  
 	@SuppressWarnings("unchecked")
+=======
+import java.util.Stack;
+
+
+public class Logic implements DrawingEngine {
+
+	private ArrayList<Shape> shapes = new ArrayList<Shape>();
+	private Stack<ArrayList<Shape>> undoShapes = new Stack<ArrayList<Shape>>();
+	private Stack<ArrayList<Shape>> redoShapes = new Stack<ArrayList<Shape>>();
+
+	@Override
+	public void addShape(Shape shape) {
+		shapes.add(shape);
+		if (undoShapes.size() < 20) {
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+		else {
+			undoShapes.remove(0);
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+	}
+
+	@Override
+	public void removeShape(Shape shape) {
+		shapes.remove(shape);
+		if (undoShapes.size() < 20) {
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+		else {
+			undoShapes.remove(0);
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+	}
+
+	@Override
+	public void updateShape(Shape oldShape, Shape newShape) {
+		shapes.remove(oldShape);
+		shapes.add(newShape);
+		if (undoShapes.size() < 20) {
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+		else {
+			undoShapes.remove(0);
+			undoShapes.push(new ArrayList<Shape>(shapes));
+		}
+	}
+
+	@Override
+	public Shape[] getShapes() {
+		return shapes.toArray(new Shape[shapes.size()]);
+	}
+	
 	@Override
     public List<Class<? extends Shape>> getSupportedShapes() {
 		Package pack = Shape.class.getPackage();
@@ -186,4 +242,4 @@ public class Logic implements DrawingEngine {
  
     }
  
-}
+}	

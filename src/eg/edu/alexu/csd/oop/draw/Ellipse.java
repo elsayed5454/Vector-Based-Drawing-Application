@@ -8,7 +8,7 @@ public class Ellipse extends EllipticalShapes {
 		
 	}
 	
-	public Ellipse (double width, double height, Point topLeft) {
+	public Ellipse (Point topLeft, double width, double height) {
 		this.setPosition(topLeft);
 		this.prop.put("width", width);
 		this.prop.put("height", height);

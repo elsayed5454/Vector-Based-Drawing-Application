@@ -8,6 +8,9 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="test_supporting_files.jar"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="RoundRectangle.jar"/>
+=======
+>>>>>>> 7c18d23dae7cc107e8ec14cf4a534be095e68317
 	<classpathentry kind="output" path="bin"/>
 </classpath>
