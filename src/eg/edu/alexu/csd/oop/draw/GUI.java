@@ -98,7 +98,6 @@ public class GUI {
 			// If satisfying the inequality (x-h)^2/a^2 + (y-k)^2/b^2 <= 1
 			// where (h, k) is the center of ellipse and a is major axis and b is minor axis
 			else if (shapes[i].getClass().toString().contains("Ellipse")) {
-				if ((Math.pow(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2) , 2.0) / Math.pow(shapes[i].getProperties().get("width")/2 , 2.0))+(Math.pow(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2) , 2.0) / Math.pow(shapes[i].getProperties().get("height")/2 , 2.0)) <= 1) {
 				double x = selected.getX(), y = selected.getY();
 				double h = shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2;
 				double k = shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2;
