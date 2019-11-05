@@ -49,8 +49,8 @@ import org.xml.sax.SAXException;
 public class Logic implements DrawingEngine {
  
     private ArrayList<Shape> shapes = new ArrayList<Shape>();
-    private Stack<ArrayList<Shape>> undoShapes = new Stack<ArrayList<Shape>>();
-    private Stack<ArrayList<Shape>> redoShapes = new Stack<ArrayList<Shape>>(); 
+    private ArrayList<ArrayList<Shape>> undoShapes = new ArrayList<ArrayList<Shape>>(Arrays.asList(new ArrayList<Shape>()));
+    private ArrayList<ArrayList<Shape>> redoShapes = new ArrayList<ArrayList<Shape>>(); 
     private List<Class<? extends Shape>> supportedShapes = new ArrayList<Class<? extends Shape>>
     (Arrays.asList(LineSegment.class,Circle.class,Ellipse.class,Rectangle.class,Square.class,Triangle.class));
     		
@@ -65,11 +65,11 @@ public class Logic implements DrawingEngine {
     public void addShape(Shape shape) {
         shapes.add(shape);
         if (undoShapes.size() <= 20) {
-            undoShapes.push(new ArrayList<Shape>(shapes));
+            undoShapes.add(new ArrayList<Shape>(shapes));
         }
         else {
             undoShapes.remove(0);
-            undoShapes.push(new ArrayList<Shape>(shapes));
+            undoShapes.add(new ArrayList<Shape>(shapes));
         }
     }
  
@@ -77,11 +77,11 @@ public class Logic implements DrawingEngine {
     public void removeShape(Shape shape) {
         shapes.remove(shape);
         if (undoShapes.size() <= 20) {
-            undoShapes.push(new ArrayList<Shape>(shapes));
+            undoShapes.add(new ArrayList<Shape>(shapes));
         }
         else {
             undoShapes.remove(0);
-            undoShapes.push(new ArrayList<Shape>(shapes));
+            undoShapes.add(new ArrayList<Shape>(shapes));
         }
     }
  
@@ -89,11 +89,11 @@ public class Logic implements DrawingEngine {
     public void updateShape(Shape oldShape, Shape newShape) {
         shapes.set(shapes.indexOf(oldShape), newShape);
         if (undoShapes.size() <= 20) {
-            undoShapes.push(new ArrayList<Shape>(shapes));
+            undoShapes.add(new ArrayList<Shape>(shapes));
         }
         else {
             undoShapes.remove(0);
-            undoShapes.push(new ArrayList<Shape>(shapes));
+            undoShapes.add(new ArrayList<Shape>(shapes));
         }
     }
  
@@ -148,33 +148,28 @@ public class Logic implements DrawingEngine {
  
     @Override
     public void undo() {
-        if (!undoShapes.isEmpty()) {
+        if (undoShapes.size() > 1) {
             if (redoShapes.size() <= 20) {
-                redoShapes.push(new ArrayList<Shape>(undoShapes.pop()));
+                redoShapes.add(new ArrayList<Shape>(undoShapes.remove(undoShapes.size()-1)));
             }
             else {
                 redoShapes.remove(0);
-                redoShapes.push(new ArrayList<Shape>(undoShapes.pop()));
+                redoShapes.add(new ArrayList<Shape>(undoShapes.remove(undoShapes.size()-1)));
             }
-            if (!undoShapes.isEmpty()) {
-                shapes = new ArrayList<Shape>(undoShapes.peek());
-            }
-            else {
-                shapes = new ArrayList<Shape>();
-            }
+            shapes = new ArrayList<Shape>(undoShapes.get(undoShapes.size()-1));
         }
     }
  
     @Override
     public void redo() {
         if (!redoShapes.isEmpty()) {
-            shapes = new ArrayList<Shape>(redoShapes.peek());
+            shapes = new ArrayList<Shape>(redoShapes.get(redoShapes.size()-1));
             if (undoShapes.size() <= 20) {
-                undoShapes.push(new ArrayList<Shape>(redoShapes.pop()));
+                undoShapes.add(new ArrayList<Shape>(redoShapes.remove(redoShapes.size()-1)));
             }
             else {
                 undoShapes.remove(0);
-                undoShapes.push(new ArrayList<Shape>(redoShapes.pop()));
+                undoShapes.add(new ArrayList<Shape>(redoShapes.remove(redoShapes.size()-1)));
             }
         }
     }
