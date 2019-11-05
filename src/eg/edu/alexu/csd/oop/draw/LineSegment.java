@@ -24,7 +24,7 @@ public class LineSegment extends GeometricShapes {
 	public void draw(Graphics canvas) {
 		((Graphics2D)canvas).setStroke(new BasicStroke(5f));
 		((Graphics2D)canvas).setColor(getColor());
-		((Graphics2D)canvas).drawLine(this.getProperties().get("x1").intValue() , this.getProperties().get("y1").intValue() , this.getProperties().get("x2").intValue() , this.getProperties().get("y2").intValue() );
+		((Graphics2D)canvas).drawLine(this.getProperties().get("x1").intValue() ,this.getProperties().get("y1").intValue(), this.getProperties().get("x2").intValue(), this.getProperties().get("y2").intValue());
 	}
 	
 	@Override
