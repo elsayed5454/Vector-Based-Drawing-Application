@@ -4,6 +4,7 @@ package eg.edu.alexu.csd.oop.draw;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,19 +12,23 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 public class GUI {
 	
@@ -56,6 +61,7 @@ public class GUI {
 	Point firstPoint, secondPoint;
 	Color clr = Color.BLACK, fillClr = Color.WHITE;
 	Shape toMove = null;
+	Class<Shape> importedClass;
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -65,7 +71,7 @@ public class GUI {
 		for (int i = shapes.length -1 ; i>= 0 ; i--) {
 			// If the sum of distance from the selected point to first end of line & from the
 			// selected point to the second end equals the length of the line (with error)
-			if (shapes[i].getClass().toString().contains("LineSegment")) {
+			if (shapes[i].getClass().getSimpleName().equals("LineSegment")) {
 				double x1 = shapes[i].getProperties().get("x1"), y1 = shapes[i].getProperties().get("y1");
 				double x2 = shapes[i].getProperties().get("x2"), y2 = shapes[i].getProperties().get("y2");
 				double length = shapes[i].getProperties().get("length");
@@ -74,7 +80,7 @@ public class GUI {
 					return shapes[i];
 				}
 			}
-			else if (shapes[i].getClass().toString().contains("Triangle")) {
+			else if (shapes[i].getClass().getSimpleName().equals("Triangle")) {
 				if(Math.abs((((selected.getX())*(shapes[i].getProperties().get("y2")-shapes[i].getProperties().get("y3")))+((shapes[i].getProperties().get("x2"))*(shapes[i].getProperties().get("y3")-selected.getY()))+((shapes[i].getProperties().get("x3"))*(selected.getY()-shapes[i].getProperties().get("y2"))))/2.0) + 
 				 Math.abs((((shapes[i].getProperties().get("x1"))*(selected.getY()-shapes[i].getProperties().get("y3")))+((selected.getX())*(shapes[i].getProperties().get("y3")-shapes[i].getProperties().get("y1")))+((shapes[i].getProperties().get("x3"))*(shapes[i].getProperties().get("y1")-selected.getY())))/2.0) +
 				 Math.abs((((shapes[i].getProperties().get("x1"))*(shapes[i].getProperties().get("y2")-selected.getY()))+((shapes[i].getProperties().get("x2"))*(selected.getY()-shapes[i].getProperties().get("y1")))+((selected.getX())*(shapes[i].getProperties().get("y1")-shapes[i].getProperties().get("y2"))))/2.0) <= shapes[i].getProperties().get("area") * 1.001
@@ -84,7 +90,7 @@ public class GUI {
 					return shapes[i];
 				}
 			}
-			else if (shapes[i].getClass().toString().contains("Circle")) {
+			else if (shapes[i].getClass().getSimpleName().equals("Circle")) {
 				if (Point.distance(selected.getX(), selected.getY(), shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2, shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2) <= shapes[i].getProperties().get("width") / 2) {
 					return shapes[i];
 
@@ -92,7 +98,7 @@ public class GUI {
 			}
 			// If satisfying the inequality (x-h)^2/a^2 + (y-k)^2/b^2 <= 1
 			// where (h, k) is the center of ellipse and a is major axis and b is minor axis
-			else if (shapes[i].getClass().toString().contains("Ellipse")) {
+			else if (shapes[i].getClass().getSimpleName().equals("Ellipse")) {
 				double x = selected.getX(), y = selected.getY();
 				double h = shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2;
 				double k = shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2;
@@ -101,14 +107,14 @@ public class GUI {
 					return shapes[i];
 				}
 			}
-			else if (shapes[i].getClass().toString().contains("Rectangle")) {
+			else if (shapes[i].getClass().getSimpleName().equals("Rectangle")) {
 				if (Math.abs(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2)) <= shapes[i].getProperties().get("width")/2 
 				&& Math.abs(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2)) <= shapes[i].getProperties().get("height")/2) {
 					return shapes[i];
 
 				}
 			}
-			else if (shapes[i].getClass().toString().contains("Square")) {
+			else if (shapes[i].getClass().getSimpleName().equals("Square")) {
 				if (Math.abs(selected.getX() - (shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2)) <= shapes[i].getProperties().get("width")/2 
 						&& Math.abs(selected.getY() - (shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2)) <= shapes[i].getProperties().get("height")/2) {
 					return shapes[i];
@@ -306,6 +312,36 @@ public class GUI {
 					moveAttempt = false;
 					resizeAttempt = false;
 				}
+				//imported shape
+				else if (action == 12) {
+					try {
+						Object instance = importedClass.newInstance();
+						Method drawMethod = importedClass.getDeclaredMethod("draw",Graphics.class);
+						Method positionMethod = importedClass.getDeclaredMethod("setPosition", Point.class);
+						positionMethod.invoke(instance, e.getPoint());
+						Map<String, Double> prop = new HashMap<String, Double>();
+						prop.put("Width", 400.0);
+				        prop.put("Length", 150.0);
+				        prop.put("ArcWidth", 75.0);
+				        prop.put("ArcLength", 75.0);
+						Method propMethod = importedClass.getDeclaredMethod("setProperties",Map.class);
+						propMethod.invoke(instance, prop);
+						drawMethod.invoke(instance,canvas.getGraphics());
+						engine.addShape((Shape) instance);
+					} catch (InstantiationException e1) {
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						e1.printStackTrace();
+					} catch (NoSuchMethodException e1) {
+						e1.printStackTrace();
+					} catch (SecurityException e1) {
+						e1.printStackTrace();
+					} catch (IllegalArgumentException e1) {
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						e1.printStackTrace();
+					}
+				}
 			}
 					
 			@Override
@@ -313,7 +349,7 @@ public class GUI {
 				if (moveAttempt) {
 					toMove = contains(firstPoint);
 					if (toMove != null) {
-						if (toMove.getClass().toString().contains("LineSegment")) {
+						if (toMove.getClass().getSimpleName().equals("LineSegment")) {
 							double x1,y1,x2,y2;
 							if (firstPoint.getX() <= e.getX()) {
 								x1 = toMove.getProperties().get("x1") + ( e.getX() - firstPoint.getX() );
@@ -340,7 +376,7 @@ public class GUI {
 							moved.setFillColor(toMove.getFillColor());
 							engine.updateShape(toMove, moved);
 						}
-						else if (toMove.getClass().toString().contains("Triangle")) {
+						else if (toMove.getClass().getSimpleName().equals("Triangle")) {
 							double x1,y1,x2,y2,x3,y3;
 							if (firstPoint.getX() <= e.getX()) {
 								x1 = toMove.getProperties().get("x1") + ( e.getX() - firstPoint.getX() );
@@ -407,7 +443,7 @@ public class GUI {
 				}
 				else if (resizeAttempt) {
 					Shape toResize = contains(firstPoint);
-					if (toResize.getClass().toString().contains("Rectangle")) {
+					if (toResize.getClass().getSimpleName().equals("Rectangle")) {
 						double x = toResize.getPosition().getX(), y = toResize.getPosition().getY();
 						// Four corners of the rectangle
 						int whichCorner = 1;
@@ -464,7 +500,7 @@ public class GUI {
 						rectangle.setFillColor(toResize.getFillColor());
 						engine.updateShape(toResize, rectangle);
 					}
-					else if (toResize.getClass().toString().contains("Square")) {
+					else if (toResize.getClass().getSimpleName().equals("Square")) {
 						double x = toResize.getPosition().getX(), y = toResize.getPosition().getY();
 						double sideLength = toResize.getProperties().get("width");
 						// Four corners of the square
@@ -521,7 +557,7 @@ public class GUI {
 						square.setFillColor(toResize.getFillColor());
 						engine.updateShape(toResize, square);
 					}
-					else if (toResize.getClass().toString().contains("Circle")) {
+					else if (toResize.getClass().getSimpleName().equals("Circle")) {
 						double radius = toResize.getProperties().get("width") / 2;
 						Point center = new Point();
 						center.setLocation(toResize.getPosition().getX() + radius, toResize.getPosition().getY() + radius);
@@ -533,7 +569,7 @@ public class GUI {
 						newCircle.setFillColor(toResize.getFillColor());
 						engine.updateShape(toResize, newCircle);
 					}
-					else if (toResize.getClass().toString().contains("Ellipse")) {
+					else if (toResize.getClass().getSimpleName().equals("Ellipse")) {
 						double x = toResize.getPosition().getX(), y = toResize.getPosition().getY();
 						// Four corners of the ellipse
 						int whichCorner = 1;
@@ -590,7 +626,7 @@ public class GUI {
 						ellipse.setFillColor(toResize.getFillColor());
 						engine.updateShape(toResize, ellipse);
 					}
-					else if (toResize.getClass().toString().contains("LineSegment")) {
+					else if (toResize.getClass().getSimpleName().equals("LineSegment")) {
 						double x1 = toResize.getProperties().get("x1"), y1 = toResize.getProperties().get("y1");
 						double x2 = toResize.getProperties().get("x2"), y2 = toResize.getProperties().get("y2");
 						Point farEnd = new Point();
@@ -605,7 +641,7 @@ public class GUI {
 						line.setFillColor(toResize.getFillColor());
 						engine.updateShape(toResize, line);
 					}
-					else if (toResize.getClass().toString().contains("Triangle")) {
+					else if (toResize.getClass().getSimpleName().equals("Triangle")) {
 						// Three vertices of triangle
 						Point vertex_1 = new Point();
 						vertex_1.setLocation(toResize.getProperties().get("x1"), toResize.getProperties().get("y1"));
@@ -811,6 +847,7 @@ public class GUI {
 		
 		JButton btnImport = new JButton("Import");
 		btnImport.addActionListener(new ActionListener() {
+			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
 				fileChooser.setAcceptAllFileFilterUsed(false);
@@ -830,7 +867,9 @@ public class GUI {
 		    					Class<?> clazz = Class.forName(name);
 		    					if (Shape.class.isAssignableFrom(clazz) && !Modifier.isInterface(clazz.getModifiers()) 
 		    			        && !Modifier.isAbstract(clazz.getModifiers()) && Modifier.isPublic(clazz.getModifiers())) {
-		    						
+		    						importedClass = (Class<Shape>) clazz;
+		    						action = 12;
+		    						break;
 		    					}
 		    				}
 		    			}
