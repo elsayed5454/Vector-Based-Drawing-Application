@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI {
@@ -776,8 +777,12 @@ public class GUI {
 		
 		JButton btnImport = new JButton("Import");
 		btnImport.addActionListener(new ActionListener() {
+			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				
+				String importName = JOptionPane.showInputDialog("Enter the class name");
+				engine.getSupportedShapes().add(Triangle.class);
+				JOptionPane.showMessageDialog(null, "Imported Successfully");
+				JOptionPane.showConfirmDialog( null ,"OK", "MESSAGE" , JOptionPane.INFORMATION_MESSAGE );
 			}
 		});
 		btnImport.setBounds(1289, 431, 71, 23);

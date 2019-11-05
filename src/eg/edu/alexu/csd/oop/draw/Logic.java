@@ -20,7 +20,7 @@ public class Logic implements DrawingEngine {
     private ArrayList<Shape> shapes = new ArrayList<Shape>();
     private Stack<ArrayList<Shape>> undoShapes = new Stack<ArrayList<Shape>>();
     private Stack<ArrayList<Shape>> redoShapes = new Stack<ArrayList<Shape>>(); 
-    private List<Class<? extends Shape>> supportedShapes = new ArrayList<Class<? extends Shape>>(Arrays.asList(LineSegment.class,Circle.class,Ellipse.class,Rectangle.class,Square.class,Triangle.class));
+    private List<Class<? extends Shape>> supportedShapes = new ArrayList<Class<? extends Shape>>(Arrays.asList(LineSegment.class,Circle.class,Ellipse.class,Rectangle.class,Square.class));
     		
     @Override
     public void refresh(Graphics canvas) {
@@ -32,7 +32,7 @@ public class Logic implements DrawingEngine {
     @Override
     public void addShape(Shape shape) {
         shapes.add(shape);
-        if (undoShapes.size() < 20) {
+        if (undoShapes.size() <= 20) {
             undoShapes.push(new ArrayList<Shape>(shapes));
         }
         else {
@@ -44,7 +44,7 @@ public class Logic implements DrawingEngine {
     @Override
     public void removeShape(Shape shape) {
         shapes.remove(shape);
-        if (undoShapes.size() < 20) {
+        if (undoShapes.size() <= 20) {
             undoShapes.push(new ArrayList<Shape>(shapes));
         }
         else {
@@ -56,7 +56,7 @@ public class Logic implements DrawingEngine {
     @Override
     public void updateShape(Shape oldShape, Shape newShape) {
         shapes.set(shapes.indexOf(oldShape), newShape);
-        if (undoShapes.size() < 20) {
+        if (undoShapes.size() <= 20) {
             undoShapes.push(new ArrayList<Shape>(shapes));
         }
         else {
@@ -117,7 +117,7 @@ public class Logic implements DrawingEngine {
     @Override
     public void undo() {
         if (!undoShapes.isEmpty()) {
-            if (redoShapes.size() < 20) {
+            if (redoShapes.size() <= 20) {
                 redoShapes.push(new ArrayList<Shape>(undoShapes.pop()));
             }
             else {
@@ -137,7 +137,7 @@ public class Logic implements DrawingEngine {
     public void redo() {
         if (!redoShapes.isEmpty()) {
             shapes = new ArrayList<Shape>(redoShapes.peek());
-            if (undoShapes.size() < 20) {
+            if (undoShapes.size() <= 20) {
                 undoShapes.push(new ArrayList<Shape>(redoShapes.pop()));
             }
             else {
