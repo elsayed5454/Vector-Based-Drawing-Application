@@ -10,12 +10,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUI {
@@ -804,12 +811,37 @@ public class GUI {
 		
 		JButton btnImport = new JButton("Import");
 		btnImport.addActionListener(new ActionListener() {
-			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				String importName = JOptionPane.showInputDialog("Enter the class name");
-				engine.getSupportedShapes().add(Triangle.class);
-				JOptionPane.showMessageDialog(null, "Imported Successfully");
-				JOptionPane.showConfirmDialog( null ,"OK", "MESSAGE" , JOptionPane.INFORMATION_MESSAGE );
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setAcceptAllFileFilterUsed(false);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Jar Files (*.jar)", "jar");
+				fileChooser.addChoosableFileFilter(filter);
+				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+					try {
+						URL url = new URL(String.format("jar:file:%s!/", file.getName()));
+						JarURLConnection connection = (JarURLConnection) url.openConnection();
+		    			JarFile jarFile = connection.getJarFile();	        	
+		    			Enumeration<JarEntry> entries =  jarFile.entries();
+		    			while (entries.hasMoreElements()) {
+		    				JarEntry jarEntries = entries.nextElement();
+		    				if (jarEntries.getName().endsWith(".class")) {
+		    					String name = jarEntries.getName().replace(".class", "").replaceAll("/", ".");
+		    					Class<?> clazz = Class.forName(name);
+		    					if (Shape.class.isAssignableFrom(clazz) && !Modifier.isInterface(clazz.getModifiers()) 
+		    			        && !Modifier.isAbstract(clazz.getModifiers()) && Modifier.isPublic(clazz.getModifiers())) {
+		    						
+		    					}
+		    				}
+		    			}
+					} catch (MalformedURLException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 		btnImport.setBounds(1248, 431, 112, 23);

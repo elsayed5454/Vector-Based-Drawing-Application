@@ -50,26 +50,53 @@ public class XMLParser {
 				name.appendChild(dom.createTextNode(list.get(i).getClass().getSimpleName()));
 				shape.appendChild(name);
 				
-				x = dom.createElement("x");
-				x.appendChild(dom.createTextNode(Double.toString(list.get(i).getPosition().getX())));
-				shape.appendChild(x);
-				
-				y = dom.createElement("y");
-				y.appendChild(dom.createTextNode(Double.toString(list.get(i).getPosition().getY())));
-				shape.appendChild(y);
-				
-				clr = dom.createElement("clr");
-				clr.appendChild(dom.createTextNode(Integer.toString(list.get(i).getColor().getRGB())));
-				shape.appendChild(clr);
-				
-				fillClr = dom.createElement("fillClr");
-				fillClr.appendChild(dom.createTextNode(Integer.toString(list.get(i).getFillColor().getRGB())));
-				shape.appendChild(fillClr);
-				
-				for (Map.Entry<String, Double> mapEntry : list.get(i).getProperties().entrySet()) {
-					property = dom.createElement(mapEntry.getKey());
-					property.appendChild(dom.createTextNode(mapEntry.getValue().toString()));
-					shape.appendChild(property);
+				if (list.get(i).getPosition() == null) {
+					x = dom.createElement("x");
+					x.appendChild(dom.createTextNode(Double.toString(0.0)));
+					shape.appendChild(x);
+					
+					y = dom.createElement("y");
+					y.appendChild(dom.createTextNode(Double.toString(0.0)));
+					shape.appendChild(y);
+				}
+				else {
+					x = dom.createElement("x");
+					x.appendChild(dom.createTextNode(Double.toString(list.get(i).getPosition().getX())));
+					shape.appendChild(x);
+					
+					y = dom.createElement("y");
+					y.appendChild(dom.createTextNode(Double.toString(list.get(i).getPosition().getY())));
+					shape.appendChild(y);
+				}
+				if (list.get(i).getColor() == null) {
+					clr = dom.createElement("clr");
+					clr.appendChild(dom.createTextNode(Integer.toString(Color.BLACK.getRGB())));
+					shape.appendChild(clr);
+				}
+				else {
+					clr = dom.createElement("clr");
+					clr.appendChild(dom.createTextNode(Integer.toString(list.get(i).getColor().getRGB())));
+					shape.appendChild(clr);
+				}
+				if (list.get(i).getFillColor() == null) {
+					fillClr = dom.createElement("fillClr");
+					fillClr.appendChild(dom.createTextNode(Integer.toString(Color.WHITE.getRGB())));
+					shape.appendChild(fillClr);
+				}
+				else {
+					fillClr = dom.createElement("fillClr");
+					fillClr.appendChild(dom.createTextNode(Integer.toString(list.get(i).getFillColor().getRGB())));
+					shape.appendChild(fillClr);
+				}
+				if (list.get(i).getProperties() == null) {
+					
+				}
+				else {
+					for (Map.Entry<String, Double> mapEntry : list.get(i).getProperties().entrySet()) {
+						property = dom.createElement(mapEntry.getKey());
+						property.appendChild(dom.createTextNode(mapEntry.getValue().toString()));
+						shape.appendChild(property);
+					}
 				}
 				root.appendChild(shape);
 			}

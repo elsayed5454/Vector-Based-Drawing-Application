@@ -148,22 +148,10 @@ public class Logic implements DrawingEngine {
     	if (path.endsWith("json")) {
             JSONParser jsonParser = new JSONParser();
             jsonParser.JSONSave(file, shapes);
-            /*for (int i = 0; i < undoShapes.size(); i++) {
-            	jsonParser.JSONSave(file, undoShapes.get(i));
-            }
-            for (int i = 0; i < undoShapes.size(); i++) {
-            	jsonParser.JSONSave(file, redoShapes.get(i));
-            }*/
     	}
     	else {
     		XMLParser xmlParser = new XMLParser();
     		xmlParser.XMLSave(file, shapes);
-    		/*for (int i = 0; i < undoShapes.size(); i++) {
-            	xmlParser.XMLSave(file, undoShapes.get(i));
-            }
-    		for (int i = 0; i < undoShapes.size(); i++) {
-            	xmlParser.XMLSave(file, redoShapes.get(i));
-            }*/
     	}
     }
  
