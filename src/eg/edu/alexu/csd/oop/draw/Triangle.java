@@ -27,12 +27,12 @@ public class Triangle extends Polygons {
 	
 	@Override
 	public void draw(Graphics canvas) {
-		((Graphics2D)canvas).setStroke(new BasicStroke(2.0f));
+		((Graphics2D)canvas).setStroke(new BasicStroke(5f));
 		int[] x = {getProperties().get("x1").intValue(), getProperties().get("x2").intValue(), getProperties().get("x3").intValue()};
 		int[] y = {getProperties().get("y1").intValue(), getProperties().get("y2").intValue(), getProperties().get("y3").intValue()};
 		((Graphics2D)canvas).setColor(getColor());
-		((Graphics2D)canvas).setColor(getFillColor());
 		((Graphics2D)canvas).drawPolygon(x, y, 3);
+		((Graphics2D)canvas).setColor(getFillColor());
 		((Graphics2D)canvas).fillPolygon(x, y, 3);
 	}
 	

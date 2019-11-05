@@ -87,8 +87,7 @@ public class Logic implements DrawingEngine {
  
     @Override
     public void updateShape(Shape oldShape, Shape newShape) {
-        shapes.remove(oldShape);
-        shapes.add(newShape);
+        shapes.set(shapes.indexOf(oldShape), newShape);
         if (undoShapes.size() < 20) {
             undoShapes.push(new ArrayList<Shape>(shapes));
         }

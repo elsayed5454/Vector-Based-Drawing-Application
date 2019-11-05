@@ -1,5 +1,6 @@
 package eg.edu.alexu.csd.oop.draw;
 
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -43,9 +44,9 @@ public class GUI {
 
 	DrawingEngine engine = new Logic();
 	private int action = -1;
-	boolean secondClick = false, thirdClick = false, actionAttempt = false;
+	boolean secondClick = false, thirdClick = false, moveAttempt = false, resizeAttempt  =false;
 	Point firstPoint, secondPoint;
-	Color clr = Color.BLACK, fillClr = Color.BLACK;
+	Color clr = Color.BLACK, fillClr = Color.WHITE;
 	Shape toMove = null;
 	/**
 	 * Initialize the contents of the frame.
@@ -87,7 +88,7 @@ public class GUI {
 				double x = selected.getX(), y = selected.getY();
 				double h = shapes[i].getPosition().getX() + shapes[i].getProperties().get("width")/2;
 				double k = shapes[i].getPosition().getY() + shapes[i].getProperties().get("height")/2;
-				double a = shapes[i].getProperties().get("width"), b = shapes[i].getProperties().get("height");
+				double a = shapes[i].getProperties().get("width")/2, b = shapes[i].getProperties().get("height")/2;
 				if ((Math.pow(x - h, 2) / Math.pow(a, 2)) + (Math.pow(y - k, 2) / Math.pow(b, 2)) <= 1) {
 					return shapes[i];
 				}
@@ -133,8 +134,9 @@ public class GUI {
 						line.setColor(clr);
 						line.setFillColor(fillClr);
 						engine.addShape(line);
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 						secondClick = false;
-						action = -1;
 					}
 				}
 				// Circle action
@@ -149,11 +151,12 @@ public class GUI {
 						Point topLeft = new Point();
 						topLeft.setLocation(firstPoint.getX() - radius, firstPoint.getY() - radius);
 						Shape circle = new Circle(topLeft, radius*2);
-						circle.setColor(clr);
-						circle.setFillColor(fillClr);
+						circle.setColor(Color.BLACK);
+						circle.setFillColor(Color.WHITE);
 						engine.addShape(circle);
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 						secondClick = false;
-						action = -1;
 					}
 				}
 				// Ellipse action
@@ -172,12 +175,13 @@ public class GUI {
 						Point topLeft = new Point();
 						topLeft.setLocation(firstPoint.getX() - halfWidth, firstPoint.getY() - halfHeight);
 						Shape ellipse = new Ellipse(topLeft, 2*halfWidth, 2*halfHeight);
-						ellipse.setColor(clr);
-						ellipse.setFillColor(fillClr);
+						ellipse.setColor(Color.BLACK);
+						ellipse.setFillColor(Color.WHITE);
 						engine.addShape(ellipse);
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 						secondClick = false;
 						thirdClick = false;
-						action = -1;
 					}
 				}
 				// Triangle action
@@ -192,12 +196,13 @@ public class GUI {
 					}
 					else {
 						Shape triangle = new Triangle(firstPoint, secondPoint, e.getPoint());
-						triangle.setColor(clr);
-						triangle.setFillColor(fillClr);
+						triangle.setColor(Color.BLACK);
+						triangle.setFillColor(Color.WHITE);
 						engine.addShape(triangle);
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 						secondClick = false;
 						thirdClick = false;
-						action = -1;
 					}
 				}
 				// Rectangle action
@@ -214,11 +219,12 @@ public class GUI {
 						double width = Math.abs(firstPoint.getX() - e.getX());
 						double height = Math.abs(firstPoint.getY() - e.getY());
 						Shape rectangle = new Rectangle(topLeft, width, height);
-						rectangle.setColor(clr);
-						rectangle.setFillColor(fillClr);
+						rectangle.setColor(Color.BLACK);
+						rectangle.setFillColor(Color.WHITE);
 						engine.addShape(rectangle);
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 						secondClick = false;
-						action = -1;
 					}
 				}
 				// Square action
@@ -235,11 +241,12 @@ public class GUI {
 						// Diagonal * cos(45 degrees) = side of square
 						double side = Point.distance(firstPoint.getX(), firstPoint.getY(), e.getX(), e.getY()) * Math.cos(Math.toRadians(45));
 						Shape square = new Square(topLeft, side);
-						square.setColor(clr);
-						square.setFillColor(fillClr);
+						square.setColor(Color.BLACK);
+						square.setFillColor(Color.WHITE);
 						engine.addShape(square);
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 						secondClick = false;
-						action = -1;
 					}
 				}
 				// Remove action
@@ -248,9 +255,9 @@ public class GUI {
 					Shape found = contains(selected);
 					if (found != null) {
 						engine.removeShape(found);
+						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 					}
-					canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-					action = -1;
 				}
 				//coloring
 				else if (action == 8) {
@@ -262,16 +269,16 @@ public class GUI {
 							colored.setColor(clr);
 							colored.setFillColor(fillClr);
 							engine.updateShape(found, colored);
+							canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+							engine.refresh(canvas.getGraphics());
 						} catch (CloneNotSupportedException e1) {
 							e1.printStackTrace();
 						}
 					}
-					action = -1;
-					canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 				}
 				// Resize action
 				else if (action == 9) {
-					if (!secondClick) {
+					if (contains(e.getPoint()) != null) {
 						firstPoint = e.getPoint();
 						if (contains(e.getPoint()) == null) {
 							firstPoint = null;
@@ -468,6 +475,7 @@ public class GUI {
 						else if (toResize.getClass().toString().contains("LineSegment")) {
 							double x1 = toResize.getProperties().get("x1"), y1 = toResize.getProperties().get("y1");
 							double x2 = toResize.getProperties().get("x2"), y2 = toResize.getProperties().get("y2");
+							double length = toResize.getProperties().get("length");
 							Point nearEnd = new Point();
 							Point farEnd = new Point();
 							if (Point.distance(x1, y1, e.getX(), e.getY()) < Point.distance(x2, y2, e.getX(), e.getY())) {
@@ -479,14 +487,19 @@ public class GUI {
 								farEnd.setLocation(x1, y1);
 							}
 							// Using vector normalization to change line length in same direction
-							// Assuming distance d then the new point (x2, y2) = (x1, y1) + d*(unit vector)
+							// Assuming distance d then the new point (x2, y2) = (x1, y1) + d*u
 							Point vector = new Point();
 							vector.setLocation(nearEnd.getX() - farEnd.getX(), nearEnd.getY() - farEnd.getY());
 							double vectorLength = Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2));
-							Point unitVector = new Point();
-							unitVector.setLocation(vector.getX() / vectorLength, vector.getY() / vectorLength);
-							double d = Point.distance(farEnd.getX(), farEnd.getY(), e.getX(), e.getY());
-							nearEnd.setLocation(farEnd.getX() + d*unitVector.getX(), farEnd.getY() + d*unitVector.getY());
+							Point u = new Point();
+							u.setLocation(vector.getX() / vectorLength, vector.getY() / vectorLength);
+							double d = Point.distance(nearEnd.getX(), nearEnd.getY(), e.getX(), e.getY()) + length;
+							// Determining if the mouse position is inside the line or not
+							if (Point.distance(e.getX(), e.getY(), x1, y1) + Point.distance(e.getX(), e.getY(), x2, y2) >= length * 0.998 && 
+								Point.distance(e.getX(), e.getY(), x1, y1) + Point.distance(e.getX(), e.getY(), x2, y2) <= length * 1.002) {
+								d -= length;
+							}
+							nearEnd.setLocation(farEnd.getX() + d*u.getX(), farEnd.getY() + d*u.getY());
 							Shape line = new LineSegment(nearEnd, farEnd);
 							line.setColor(toResize.getColor());
 							line.setFillColor(toResize.getFillColor());
@@ -521,19 +534,28 @@ public class GUI {
 						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 						secondClick = false;
 						action = -1;
+						resizeAttempt = true;
+						moveAttempt = false;
 					}
 				}
 				// Move attempt
-				else {
-					actionAttempt = true;
-					firstPoint = e.getPoint();
+				else if (action == 10){
+					if (contains(e.getPoint()) != null) {
+						moveAttempt = true;
+						firstPoint = e.getPoint();
+						resizeAttempt = false;
+					}
 				}
-				engine.refresh(canvas.getGraphics());
+				else if (action == 11) {
+					action = -1;
+					moveAttempt = false;
+					resizeAttempt = false;
+				}
 			}
 					
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (actionAttempt) {
+				if (moveAttempt) {
 					toMove = contains(firstPoint);
 					if (toMove != null) {
 						if (toMove.getClass().toString().contains("LineSegment")) {
@@ -624,11 +646,240 @@ public class GUI {
 						}
 						toMove = null;
 						canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+						engine.refresh(canvas.getGraphics());
 					}
-					
+					moveAttempt = false;
 				}
-				actionAttempt = false;
-				engine.refresh(canvas.getGraphics());
+				else if (resizeAttempt) {
+					Shape toResize = contains(firstPoint);
+					if (toResize.getClass().toString().contains("Rectangle")) {
+						double x = toResize.getPosition().getX(), y = toResize.getPosition().getY();
+						// Four corners of the rectangle
+						int whichCorner = 1;
+						Point topLeft = new Point();
+						topLeft.setLocation(x, y);
+						Point topRight = new Point();
+						topRight.setLocation(x + toResize.getProperties().get("width"), y);
+						Point bottomLeft = new Point();
+						bottomLeft.setLocation(x, y + toResize.getProperties().get("height"));
+						Point bottomRight = new Point();
+						bottomRight.setLocation(x + toResize.getProperties().get("width"), y + toResize.getProperties().get("height"));
+						// Get the near corner to the mouse position & the far one
+						Point nearCorner = new Point();
+						Point farCorner = new Point();
+						double min = Point.distance(topLeft.getX(), topLeft.getY(), e.getX(), e.getY());
+						nearCorner.setLocation(topLeft);
+						farCorner.setLocation(bottomRight);
+						if (min > Point.distance(topRight.getX(), topRight.getY(), e.getX(), e.getY())) {
+							whichCorner = 2;
+							min = Point.distance(topRight.getX(), topRight.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(topRight);
+							farCorner.setLocation(bottomLeft);
+						}
+						if (min > Point.distance(bottomRight.getX(), bottomRight.getY(), e.getX(), e.getY())) {
+							whichCorner = 3;
+							min = Point.distance(bottomRight.getX(), bottomRight.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(bottomRight);
+							farCorner.setLocation(topLeft);
+						}
+						if (min > Point.distance(bottomLeft.getX(), bottomLeft.getY(), e.getX(), e.getY())) {
+							whichCorner = 4;
+							min = Point.distance(bottomLeft.getX(), bottomLeft.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(bottomLeft);
+							farCorner.setLocation(topRight);
+						}
+						double newWidth = Math.abs(e.getX() - farCorner.getX());
+						double newHeight = Math.abs(e.getY() - farCorner.getY());
+						Point newTopLeft = new Point();
+						if (whichCorner == 1) {
+							newTopLeft.setLocation(e.getPoint());
+						}
+						else if (whichCorner == 2) {
+							newTopLeft.setLocation(topLeft.getX(), e.getY());
+						}
+						else if (whichCorner == 3) {
+							newTopLeft.setLocation(topLeft);
+						}
+						else if (whichCorner == 4) {
+							newTopLeft.setLocation(e.getX(), e.getY() - newHeight);
+						}
+						nearCorner.setLocation(e.getX(), e.getY());
+						Shape rectangle = new Rectangle(newTopLeft, newWidth, newHeight);
+						rectangle.setColor(toResize.getColor());
+						rectangle.setFillColor(toResize.getFillColor());
+						engine.updateShape(toResize, rectangle);
+					}
+					else if (toResize.getClass().toString().contains("Square")) {
+						double x = toResize.getPosition().getX(), y = toResize.getPosition().getY();
+						double sideLength = toResize.getProperties().get("width");
+						// Four corners of the square
+						int whichCorner = 1;
+						Point topLeft = new Point();
+						topLeft.setLocation(x, y);
+						Point topRight = new Point();
+						topRight.setLocation(x + sideLength, y);
+						Point bottomLeft = new Point();
+						bottomLeft.setLocation(x, y + sideLength);
+						Point bottomRight = new Point();
+						bottomRight.setLocation(x + sideLength, y + sideLength);
+						// Get the near corner to the mouse position
+						Point nearCorner = new Point();
+						Point farCorner = new Point();
+						double min = Point.distance(topLeft.getX(), topLeft.getY(), e.getX(), e.getY());
+						nearCorner.setLocation(topLeft);
+						farCorner.setLocation(bottomRight);
+						if (min > Point.distance(topRight.getX(), topRight.getY(), e.getX(), e.getY())) {
+							whichCorner = 2;
+							min = Point.distance(topRight.getX(), topRight.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(topRight);
+							farCorner.setLocation(bottomLeft);
+						}
+						if (min > Point.distance(bottomRight.getX(), bottomRight.getY(), e.getX(), e.getY())) {
+							whichCorner = 3;
+							min = Point.distance(bottomRight.getX(), bottomRight.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(bottomRight);
+							farCorner.setLocation(topLeft);
+						}
+						if (min > Point.distance(bottomLeft.getX(), bottomLeft.getY(), e.getX(), e.getY())) {
+							whichCorner = 4;
+							min = Point.distance(bottomLeft.getX(), bottomLeft.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(bottomLeft);
+							farCorner.setLocation(topRight);
+						}
+						double newSideLength = Point.distance(farCorner.getX(), farCorner.getY(), e.getX(), e.getY()) * Math.cos(Math.toRadians(45));
+						Point newTopLeft = new Point();
+						if (whichCorner == 1) {
+							newTopLeft.setLocation(e.getPoint());
+						}
+						else if (whichCorner == 2) {
+							newTopLeft.setLocation(topLeft.getX(), e.getY());
+						}
+						else if (whichCorner == 3) {
+							newTopLeft.setLocation(topLeft);
+						}
+						else if (whichCorner == 4) {
+							newTopLeft.setLocation(e.getX(), e.getY() - newSideLength);
+						}
+						nearCorner.setLocation(e.getX(), e.getY());
+						Shape square = new Square(newTopLeft, newSideLength);
+						square.setColor(toResize.getColor());
+						square.setFillColor(toResize.getFillColor());
+						engine.updateShape(toResize, square);
+					}
+					else if (toResize.getClass().toString().contains("Circle")) {
+						double radius = toResize.getProperties().get("width") / 2;
+						Point center = new Point();
+						center.setLocation(toResize.getPosition().getX() + radius, toResize.getPosition().getY() + radius);
+						double newRadius = Point.distance(center.getX(), center.getY(), e.getX(), e.getY());
+						Point newTopLeft = new Point();
+						newTopLeft.setLocation(center.getX() - newRadius, center.getY() - newRadius);
+						Shape newCircle = new Circle(newTopLeft, newRadius*2);
+						newCircle.setColor(toResize.getColor());
+						newCircle.setFillColor(toResize.getFillColor());
+						engine.updateShape(toResize, newCircle);
+					}
+					else if (toResize.getClass().toString().contains("Ellipse")) {
+						double x = toResize.getPosition().getX(), y = toResize.getPosition().getY();
+						// Four corners of the ellipse
+						int whichCorner = 1;
+						Point topLeft = new Point();
+						topLeft.setLocation(x, y);
+						Point topRight = new Point();
+						topRight.setLocation(x + toResize.getProperties().get("width"), y);
+						Point bottomLeft = new Point();
+						bottomLeft.setLocation(x, y + toResize.getProperties().get("height"));
+						Point bottomRight = new Point();
+						bottomRight.setLocation(x + toResize.getProperties().get("width"), y + toResize.getProperties().get("height"));
+						// Get the near corner to the mouse position & the far one
+						Point nearCorner = new Point();
+						Point farCorner = new Point();
+						double min = Point.distance(topLeft.getX(), topLeft.getY(), e.getX(), e.getY());
+						nearCorner.setLocation(topLeft);
+						farCorner.setLocation(bottomRight);
+						if (min > Point.distance(topRight.getX(), topRight.getY(), e.getX(), e.getY())) {
+							whichCorner = 2;
+							min = Point.distance(topRight.getX(), topRight.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(topRight);
+							farCorner.setLocation(bottomLeft);
+						}
+						if (min > Point.distance(bottomRight.getX(), bottomRight.getY(), e.getX(), e.getY())) {
+							whichCorner = 3;
+							min = Point.distance(bottomRight.getX(), bottomRight.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(bottomRight);
+							farCorner.setLocation(topLeft);
+						}
+						if (min > Point.distance(bottomLeft.getX(), bottomLeft.getY(), e.getX(), e.getY())) {
+							whichCorner = 4;
+							min = Point.distance(bottomLeft.getX(), bottomLeft.getY(), e.getX(), e.getY());
+							nearCorner.setLocation(bottomLeft);
+							farCorner.setLocation(topRight);
+						}
+						double newWidth = Math.abs(e.getX() - farCorner.getX());
+						double newHeight = Math.abs(e.getY() - farCorner.getY());
+						Point newTopLeft = new Point();
+						if (whichCorner == 1) {
+							newTopLeft.setLocation(e.getPoint());
+						}
+						else if (whichCorner == 2) {
+							newTopLeft.setLocation(topLeft.getX(), e.getY());
+						}
+						else if (whichCorner == 3) {
+							newTopLeft.setLocation(topLeft);
+						}
+						else if (whichCorner == 4) {
+							newTopLeft.setLocation(e.getX(), e.getY() - newHeight);
+						}
+						nearCorner.setLocation(e.getX(), e.getY());
+						Shape ellipse = new Ellipse(newTopLeft, newWidth, newHeight);
+						ellipse.setColor(toResize.getColor());
+						ellipse.setFillColor(toResize.getFillColor());
+						engine.updateShape(toResize, ellipse);
+					}
+					else if (toResize.getClass().toString().contains("LineSegment")) {
+						double x1 = toResize.getProperties().get("x1"), y1 = toResize.getProperties().get("y1");
+						double x2 = toResize.getProperties().get("x2"), y2 = toResize.getProperties().get("y2");
+						Point farEnd = new Point();
+						if (Point.distance(x1, y1, firstPoint.getX(), firstPoint.getY()) < Point.distance(x2, y2, firstPoint.getX(), firstPoint.getY())) {
+							farEnd.setLocation(x2, y2);
+						}
+						else {
+							farEnd.setLocation(x1, y1);
+						}
+						Shape line = new LineSegment(farEnd, e.getPoint());
+						line.setColor(toResize.getColor());
+						line.setFillColor(toResize.getFillColor());
+						engine.updateShape(toResize, line);
+					}
+					else if (toResize.getClass().toString().contains("Triangle")) {
+						// Three vertices of triangle
+						Point vertex_1 = new Point();
+						vertex_1.setLocation(toResize.getProperties().get("x1"), toResize.getProperties().get("y1"));
+						Point vertex_2 = new Point();
+						vertex_2.setLocation(toResize.getProperties().get("x2"), toResize.getProperties().get("y2"));
+						Point vertex_3 = new Point();
+						vertex_3.setLocation(toResize.getProperties().get("x3"), toResize.getProperties().get("y3"));
+						double length_1 = Point.distance(vertex_1.getX(), vertex_1.getY(), e.getX(), e.getY());
+						double length_2 = Point.distance(vertex_2.getX(), vertex_2.getY(), e.getX(), e.getY());
+						double length_3 = Point.distance(vertex_3.getX(), vertex_3.getY(), e.getX(), e.getY());
+						Shape triangle;
+						// Determining the nearest vertex to the mouse position
+						if (length_1 < length_2 && length_1 < length_3) {
+							triangle = new Triangle(e.getPoint(), vertex_2, vertex_3);
+						}
+						else if (length_2 < length_1 && length_2 < length_3) {
+							triangle = new Triangle(e.getPoint(), vertex_1, vertex_3);
+						}
+						else {
+							triangle = new Triangle(e.getPoint(), vertex_1, vertex_2);
+						}
+						triangle.setColor(toResize.getColor());
+						triangle.setFillColor(toResize.getFillColor());
+						engine.updateShape(toResize, triangle);
+					}
+					canvas.getGraphics().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+					resizeAttempt = false;
+					engine.refresh(canvas.getGraphics());
+				}
 			}
 		});
 		
@@ -640,7 +891,7 @@ public class GUI {
 				action = 1;
 			}
 		});
-		btnLine.setBounds(304, 650, 112, 23);
+		btnLine.setBounds(255, 650, 112, 23);
 		frame.getContentPane().add(btnLine);
 		
 		JButton btnCircle = new JButton("Circle");
@@ -650,7 +901,7 @@ public class GUI {
 				action = 2;
 			}
 		});
-		btnCircle.setBounds(416, 650, 112, 23);
+		btnCircle.setBounds(367, 650, 112, 23);
 		frame.getContentPane().add(btnCircle);
 		
 		JButton btnEllipse = new JButton("Ellipse");
@@ -661,7 +912,7 @@ public class GUI {
 				action = 3;
 			}
 		});
-		btnEllipse.setBounds(528, 650, 112, 23);
+		btnEllipse.setBounds(479, 650, 112, 23);
 		frame.getContentPane().add(btnEllipse);
 		
 		JButton btnTriangle = new JButton("Triangle");
@@ -672,7 +923,7 @@ public class GUI {
 				action = 4;
 			}
 		});
-		btnTriangle.setBounds(640, 650, 112, 23);
+		btnTriangle.setBounds(591, 650, 112, 23);
 		frame.getContentPane().add(btnTriangle);
 		
 		JButton btnRect = new JButton("Rectangle");
@@ -682,7 +933,7 @@ public class GUI {
 				action = 5;
 			}
 		});
-		btnRect.setBounds(752, 650, 112, 23);
+		btnRect.setBounds(703, 650, 112, 23);
 		frame.getContentPane().add(btnRect);
 		
 		JButton btnSqre = new JButton("Square");
@@ -692,7 +943,7 @@ public class GUI {
 				action = 6;
 			}
 		});
-		btnSqre.setBounds(864, 650, 112, 23);
+		btnSqre.setBounds(815, 650, 112, 23);
 		frame.getContentPane().add(btnSqre);
 		
 		JButton btnRmv = new JButton("Remove");
@@ -701,7 +952,7 @@ public class GUI {
 				action = 7;
 			}
 		});
-		btnRmv.setBounds(976, 650, 112, 23);
+		btnRmv.setBounds(927, 650, 112, 23);
 		frame.getContentPane().add(btnRmv);
 		
 		JButton btnColor = new JButton("");
@@ -819,7 +1070,25 @@ public class GUI {
 				action = 9;
 			}
 		});
-		btnResize.setBounds(1090, 650, 112, 23);
+		btnResize.setBounds(1041, 650, 112, 23);
 		frame.getContentPane().add(btnResize);
+		
+		JButton btnMove = new JButton("Move");
+		btnMove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				action = 10;
+			}
+		});
+		btnMove.setBounds(1163, 650, 89, 23);
+		frame.getContentPane().add(btnMove);
+		
+		JButton btnNoAction = new JButton("No Action");
+		btnNoAction.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				action = 11;
+			}
+		});
+		btnNoAction.setBounds(1271, 650, 89, 23);
+		frame.getContentPane().add(btnNoAction);
 	}
 }

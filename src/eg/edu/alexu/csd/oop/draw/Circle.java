@@ -5,7 +5,6 @@ import java.awt.Point;
 public class Circle extends EllipticalShapes {
 
 	public Circle () {
-		
 	}
 	
 	public Circle (Point topLeft, double diameter) {
