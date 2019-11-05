@@ -390,13 +390,14 @@ public class Logic implements DrawingEngine {
 							shape = new Triangle();
 						}
 						
+						Color clr = new Color(Integer.parseInt(childNodeList.item(3).getTextContent()));
+						shape.setColor(clr);
 						Point position = new Point();
 						double x = Double.parseDouble(childNodeList.item(1).getTextContent());
 						double y = Double.parseDouble(childNodeList.item(2).getTextContent());
 						position.setLocation(x, y);
 						shape.setPosition(position);
-						Color clr = new Color(Integer.parseInt(childNodeList.item(3).getTextContent()));
-						shape.setColor(clr);
+						
 						Color fillClr = new Color(Integer.parseInt(childNodeList.item(4).getTextContent()));
 						shape.setFillColor(fillClr);
 						Map<String, Double> prop = new HashMap<String, Double>();
