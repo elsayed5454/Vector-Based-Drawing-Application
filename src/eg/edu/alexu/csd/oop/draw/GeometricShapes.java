@@ -10,13 +10,15 @@ public class GeometricShapes implements Shape {
 
 	protected Point point = new Point();
 	protected Map<String, Double> prop = new HashMap<String, Double>();
-	protected Color clr;
-	protected Color fillClr;
+	protected Color clr = Color.BLACK ;
+	protected Color fillClr = Color.WHITE ;
 	
 	public GeometricShapes() {
 		this.prop.put("width", 0.0);
 		this.prop.put("height", 0.0);
 		this.setProperties(prop);
+		this.setColor(clr);
+		this.setFillColor(fillClr);
 	}
 	
 	@Override

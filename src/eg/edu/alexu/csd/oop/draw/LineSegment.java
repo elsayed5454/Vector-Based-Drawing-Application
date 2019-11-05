@@ -8,6 +8,14 @@ import java.awt.Point;
 public class LineSegment extends GeometricShapes {
 	
 	public LineSegment() {
+		this.prop.put("length" , 0.0);
+		this.prop.put("x1" , 0.0);
+		this.prop.put("y1" , 0.0);
+		this.prop.put("x2" , 0.0);
+		this.prop.put("y2" , 0.0);
+		setProperties(prop);
+		setColor(clr);
+		setFillColor(fillClr);
 	}
 	
 	public LineSegment(Point point1, Point point2) {

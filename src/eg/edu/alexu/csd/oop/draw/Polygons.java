@@ -10,6 +10,8 @@ public class Polygons extends GeometricShapes {
 	public Polygons() {
 		this.prop.put("width", 0.0);
 		this.prop.put("height", 0.0);
+		setColor(clr);
+		setFillColor(fillClr);
 		setProperties(prop);
 	}
 	
