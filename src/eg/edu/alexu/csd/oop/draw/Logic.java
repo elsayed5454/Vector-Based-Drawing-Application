@@ -365,37 +365,35 @@ public class Logic implements DrawingEngine {
 					Node node = nodeList.item(i);
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						NodeList childNodeList = node.getChildNodes();
-						if (childNodeList.item(0).getTextContent().equals("Circle")) {
+						if (childNodeList.item(1).getTextContent().equals("Circle")) {
 							shape = new Circle();
 						}
-						else if (childNodeList.item(0).getTextContent().equals("Ellipse")) {
+						else if (childNodeList.item(1).getTextContent().equals("Ellipse")) {
 							shape = new Ellipse();
 						}
-						else if (childNodeList.item(0).getTextContent().equals("LineSegment")) {
+						else if (childNodeList.item(1).getTextContent().equals("LineSegment")) {
 							shape = new LineSegment();
 						}
-						else if (childNodeList.item(0).getTextContent().equals("Rectangle")) {
+						else if (childNodeList.item(1).getTextContent().equals("Rectangle")) {
 							shape = new Rectangle();
 						}
-						else if (childNodeList.item(0).getTextContent().equals("Square")) {
+						else if (childNodeList.item(1).getTextContent().equals("Square")) {
 							shape = new Square();
 						}
-						else if (childNodeList.item(0).getTextContent().equals("Triangle")) {
+						else if (childNodeList.item(1).getTextContent().equals("Triangle")) {
 							shape = new Triangle();
 						}
-						
-						Color clr = new Color(Integer.parseInt(childNodeList.item(3).getTextContent()));
-						shape.setColor(clr);
+						double x = Double.parseDouble(childNodeList.item(3).getTextContent());
+						double y = Double.parseDouble(childNodeList.item(5).getTextContent());
 						Point position = new Point();
-						double x = Double.parseDouble(childNodeList.item(1).getTextContent());
-						double y = Double.parseDouble(childNodeList.item(2).getTextContent());
 						position.setLocation(x, y);
 						shape.setPosition(position);
-						
-						Color fillClr = new Color(Integer.parseInt(childNodeList.item(4).getTextContent()));
+						Color clr = new Color(Integer.parseInt(childNodeList.item(7).getTextContent()));
+						shape.setColor(clr);
+						Color fillClr = new Color(Integer.parseInt(childNodeList.item(9).getTextContent()));
 						shape.setFillColor(fillClr);
 						Map<String, Double> prop = new HashMap<String, Double>();
-						for (int j = 5; j < childNodeList.getLength(); j++) {
+						for (int j = 11; j < childNodeList.getLength(); j+=2) {
 							String key = childNodeList.item(j).getNodeName();
 							Double value = Double.parseDouble(childNodeList.item(j).getTextContent());
 							prop.put(key, value);
