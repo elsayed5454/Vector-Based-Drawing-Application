@@ -1,6 +1,5 @@
 package eg.edu.alexu.csd.oop.draw;
 
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.EventQueue;
@@ -55,17 +54,18 @@ public class GUI {
 		initialize();
 	}
 
+	// Initializing drawing engine, default color and fill color and other booleans to help in drawing
 	DrawingEngine engine = new Logic();
 	private int action = -1;
-	boolean secondClick = false, thirdClick = false, moveAttempt = false, resizeAttempt  =false;
+	boolean secondClick = false, thirdClick = false, moveAttempt = false, resizeAttempt = false;
 	Point firstPoint, secondPoint;
 	Color clr = Color.BLACK, fillClr = Color.WHITE;
 	Shape toMove = null;
 	Class<Shape> importedClass;
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	
 	private Shape contains(Point selected) {
 		Shape[] shapes = engine.getShapes();
 		for (int i = shapes.length -1 ; i>= 0 ; i--) {
@@ -674,7 +674,7 @@ public class GUI {
 			}
 		});
 		
-		// Start Buttons
+		// Shapes' buttons
 		JButton btnLine = new JButton("Line Segment");
 		btnLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -737,6 +737,7 @@ public class GUI {
 		btnSqre.setBounds(685, 670, 112, 23);
 		frame.getContentPane().add(btnSqre);
 		
+		// Action buttons
 		JButton btnRmv = new JButton("Remove");
 		btnRmv.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

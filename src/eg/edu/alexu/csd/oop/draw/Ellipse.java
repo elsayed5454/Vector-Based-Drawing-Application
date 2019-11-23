@@ -2,11 +2,10 @@ package eg.edu.alexu.csd.oop.draw;
 
 import java.awt.Point;
 
+
 public class Ellipse extends EllipticalShapes {
 	
-	public Ellipse () {
-		
-	}
+	public Ellipse() {}
 	
 	public Ellipse (Point topLeft, double width, double height) {
 		this.setPosition(topLeft);

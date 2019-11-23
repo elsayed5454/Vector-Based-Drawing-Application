@@ -6,8 +6,11 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GeometricShapes implements Shape {
 
+public class GeometricShapes implements Shape {
+	
+	// Initializing main properties of any shape like its properties and
+	// black as default stroke color and white as default fill color
 	protected Point point = new Point();
 	protected Map<String, Double> prop = new HashMap<String, Double>();
 	protected Color clr = Color.BLACK ;
@@ -21,6 +24,7 @@ public class GeometricShapes implements Shape {
 		this.setFillColor(fillClr);
 	}
 	
+	// Getters and setters
 	@Override
 	public void setPosition(Point position) {
 		this.point = position;
@@ -61,11 +65,11 @@ public class GeometricShapes implements Shape {
 		return this.fillClr;
 	}
 
+	// Draw method will be overridden in every shape
 	@Override
-	public void draw(Graphics canvas) {
-		
-	}
+	public void draw(Graphics canvas) {}
 
+	// Cloning shape by getting its position, properties, color and fill color
 	@Override
 	public Object clone() throws CloneNotSupportedException{
 		Shape cloned = this;

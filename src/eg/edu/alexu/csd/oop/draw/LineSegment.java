@@ -5,8 +5,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+
 public class LineSegment extends GeometricShapes {
 	
+	// Adding properties to the line segment like its length, start position and end position
 	public LineSegment() {
 		this.prop.put("length" , 0.0);
 		this.prop.put("x1" , 0.0);
@@ -32,7 +34,10 @@ public class LineSegment extends GeometricShapes {
 	public void draw(Graphics canvas) {
 		((Graphics2D)canvas).setStroke(new BasicStroke(5f));
 		((Graphics2D)canvas).setColor(getColor());
-		((Graphics2D)canvas).drawLine(this.getProperties().get("x1").intValue() ,this.getProperties().get("y1").intValue(), this.getProperties().get("x2").intValue(), this.getProperties().get("y2").intValue());
+		
+		// Drawing line segment by passing its starting position and ending position
+		((Graphics2D)canvas).drawLine(this.getProperties().get("x1").intValue() ,this.getProperties().get("y1").intValue(),
+		this.getProperties().get("x2").intValue(), this.getProperties().get("y2").intValue());
 	}
 	
 	@Override
