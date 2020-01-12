@@ -1,4 +1,4 @@
-# Vector-Based-Drawing-Application
+# Vector Based Drawing Application
 A GUI application using Java Swing and AWT for drawing geometric shapes with features such as:
 - Coloring
 - Resizing
